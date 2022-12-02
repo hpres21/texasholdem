@@ -31,12 +31,12 @@ class Player:
         self.is_big_blind = False
         self.is_dealer = False
     
-    def set_dealer():
+    def set_dealer(self):
         self.is_dealer = True
         self.is_big_blind = False
         self.is_small_blind= False
     
-    def clear_status():
+    def clear_status(self):
         self.is_big_blind = False
         self.is_small_blind = False
         self.is_dealer = False
@@ -74,5 +74,5 @@ class Table:
         self.board.extend(drawn_cards)
     
     def draw_card(self, deck):
-        assert len(board) <= 5
+        assert len(self.board) <= 5
         self.board.append(deck.draw())
