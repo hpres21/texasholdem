@@ -1,5 +1,5 @@
 import functools
-import table
+import poker_game
 from deck import Card
 
 

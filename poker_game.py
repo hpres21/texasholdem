@@ -7,8 +7,8 @@ class Player:
     stack: int
     hand = []
     bet_this_round: int = 0
-    current_decision: Union(int, str, None) = None
-    
+    current_decision: Union[int, str, None] = None
+
     def __repr__(self) -> str:
         return str((self.stack, self.bet_this_round, self.current_decision, self.hand))
 
@@ -20,7 +20,7 @@ class Player:
 
     def decision(self, current_bet: int)-> None:
         """
-        Decision method prompts the user to choose an action for their turn. 
+        Decision method prompts the user to choose an action for their turn.
         """
         action = input(f"You have {self.stack}, the current bet is {current_bet}. Please make a decision: ")
         try:
@@ -28,7 +28,7 @@ class Player:
             if action >= 2*current_bet and action <= self.stack:
                 self.current_decision = action - self.bet_this_round
                 self.bet_this_round += self.current_decision
-            else: 
+            else:
                 print("Please bet a valid amount")
                 self.decision(current_bet)
         except ValueError:
@@ -93,10 +93,10 @@ class Poker_Table:
     def draw_card(self, deck: Deck)-> None:
         assert len(self.board) <= 5
         self.board.append(deck.draw())
-    
+
     def process_decision(self, player: Player)-> None:
         """
-        Update table based on player's decision. All actions involve a bet >= 0, or a fold. 
+        Update table based on player's decision. All actions involve a bet >= 0, or a fold.
         """
         if player.current_decision == "FOLD":
             print("folding")
@@ -105,7 +105,7 @@ class Poker_Table:
             self.pot_size += player.current_decision
             player.stack -= player.current_decision
             self.current_bet = player.bet_this_round if player.bet_this_round > self.current_bet else self.current_bet
-    
+
     def reset(self)-> None:
         self.pot_size = 0
         self.current_bet = 0
