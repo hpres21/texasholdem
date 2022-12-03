@@ -7,7 +7,7 @@ class Player:
     stack: int
     hand = []
     bet_this_round: int = 0
-    current_decision: Union(int, str, None) = None
+    current_decision: Union[int, str, None] = None
 
     def __repr__(self) -> str:
         return str((self.stack, self.bet_this_round, self.current_decision, self.hand))
