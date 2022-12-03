@@ -1,3 +1,4 @@
+import pytest
 import table
 from deck import Card
 import rank
