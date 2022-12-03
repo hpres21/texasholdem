@@ -34,6 +34,17 @@ class Card:
             return NotImplemented
         return self.value < other.value
 
+    def __gt__(self, other):
+        if not self._is_valid_operand(other):
+            return NotImplemented
+        return self.value > other.value
+    
+    def same_suit(self, other):
+        if not self._is_valid_operand(other):
+            return NotImplemented
+        return self.suit == other.suit
+
+
 
 
 @dataclass
