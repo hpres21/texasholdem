@@ -1,6 +1,6 @@
 import pytest
 from deck import Card, Deck
-from table import Player
+from poker_game import Player
 
 
 def test_player_hand():

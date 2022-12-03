@@ -1,5 +1,5 @@
 import pytest
-from deck import Card, Deck
+from poker_game import Card, Deck
 
 def test_empty_deck():
     """

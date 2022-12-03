@@ -1,5 +1,5 @@
 import pytest
-import table
+import poker_game
 from deck import Card
 import rank
 
