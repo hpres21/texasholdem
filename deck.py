@@ -3,7 +3,7 @@ import itertools
 import functools
 import random
 
-@dataclass(repr=False, eq=False)
+@dataclass(repr=False, eq=False, frozen=True)
 @functools.total_ordering
 class Card:
     """
@@ -32,7 +32,7 @@ class Card:
     def __lt__(self, other):
         if not self._is_valid_operand(other):
             return NotImplemented
-        return self.value < other.value
+        return self.value < other.valueone
 
     def __gt__(self, other):
         if not self._is_valid_operand(other):
@@ -47,7 +47,7 @@ class Card:
 
 
 
-@dataclass
+@dataclass()
 class Deck:
     """
     Class for a deck containing 52 cards
