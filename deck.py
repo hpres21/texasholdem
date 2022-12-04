@@ -38,7 +38,7 @@ class Card:
         if not self._is_valid_operand(other):
             return NotImplemented
         return self.value > other.value
-    
+
     def same_suit(self, other):
         if not self._is_valid_operand(other):
             return NotImplemented
@@ -53,22 +53,17 @@ class Deck:
     Class for a deck containing 52 cards
     """
 
-    def __init__(self):
+    def __init__(self, ordered = False):
         values = (2+i for i in range(13))
         suits = ('h', 'c', 's', 'd')
         cards = tuple(itertools.product(values, suits))
-        self.deck = [Card (v,s) for v,s in cards]
-
-    def shuffle(self):
-        random.shuffle(self.deck)
+        deck = [Card (v,s) for v,s in cards]
+        if not ordered:
+            random.shuffle(deck)
+        self.deck = deck
 
     def draw(self):
         return self.deck.pop()
-
-    def reset(self, shuffle: bool = False):
-        self.deck = [Card (v,s) for v,s in self.cards]
-        if shuffle:
-            self.shuffle()
 
 
 if __name__ == "main":

@@ -67,7 +67,8 @@ class Poker_Table:
     pot_size: int = 0
     players = []
     board = []
-    current_bet: int  = 0
+    current_bet: int = 0
+    deck = Deck()
 
     def __repr__(self)-> str:
         """
@@ -85,14 +86,14 @@ class Poker_Table:
         self.players.pop(self.players.index(player))
         print(f"Player {player} removed from game with ${player.stack}")
 
-    def flop(self, deck: Deck)-> None:
+    def flop(self)-> None:
         assert len(self.board) == 0
-        drawn_cards = [deck.draw() for _ in range(3)]
+        drawn_cards = [self.deck.draw() for _ in range(3)]
         self.board.extend(drawn_cards)
 
-    def draw_card(self, deck: Deck)-> None:
+    def draw_card(self)-> None:
         assert len(self.board) <= 5
-        self.board.append(deck.draw())
+        self.board.append(self.deck.draw())
 
     def process_decision(self, player: Player)-> None:
         """
@@ -108,8 +109,10 @@ class Poker_Table:
 
     def reset(self)-> None:
         self.pot_size = 0
-        self.current_bet = 0
         self.players = []
+        self.board = []
+        self.current_bet = 0
+        self.deck = Deck()
 
     def end_round(self)-> None:
         assert len(self.players) == 1
