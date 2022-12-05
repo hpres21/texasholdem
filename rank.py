@@ -1,7 +1,5 @@
 import functools
 import itertools
-from typing import List
-
 import poker_game
 from deck import Card
 
@@ -11,10 +9,11 @@ class BestHand:
     """
     Class for the best hand for a player.
     """
-    ranking = {"high card": 0, "pair": 1, "two pair": 2, "three of a kind": 3,
+    ranking = {None: -1, "high card": 0, "pair": 1, "two pair": 2, "three of a kind": 3,
                "straight": 4, "flush": 5, "full house": 6, "four of a kind": 7,
                "straight flush": 8, "royal flush": 9
                }
+    rank: str
 
     def __init__(self, pocket: list[Card], board: list[Card]):
         """
@@ -27,10 +26,9 @@ class BestHand:
         """
         self.pocket = pocket
         self.board = board
-        self.rank: str
+        self.rank = None
         self.best_hand: list[Card]
         self.pocket_pos: list[int]
-        self.find_best_hand()
 
     # def __init__(self, player: Player, table: Table):
     #     self.pocket = player.hand
@@ -38,11 +36,56 @@ class BestHand:
 
     def _update_rank(self, possible_rank: str):
         assert possible_rank in self.ranking, f'{possible_rank} is not in ranking dictionary.'
+        if not self.rank:
+            self.rank = possible_rank
         if self.ranking[self.rank] < self.ranking[possible_rank]:
             self.rank = possible_rank
 
+
+    def find_best_hand2(self) -> None:
+        sorted_hand = sorted(self.pocket + self.board, reverse=True)
+
+        sorted_values = [[sorted_hand[0].value, {sorted_hand[0]}]]
+        sorted_s = []
+        sorted_c = []
+        sorted_h = []
+        sorted_d = []
+        for card in sorted_hand:
+            if card.value == sorted_values[-1][0]:
+                sorted_values[-1][1].add(card)
+            else:
+                sorted_values.append([card.value, {card}])
+            if card.suit == 's':
+                sorted_s.append(card)
+            elif card.suit == 'c':
+                sorted_c.append(card)
+            elif card.suit == 'h':
+                sorted_h.append(card)
+            else:
+                sorted_d.append(card)
+
+        # check for straight and/or flush
+        for i in range(len(sorted_values)-4):
+            if (sorted_values[i + 4][0] - sorted_values[i][0]) == 4:
+                self._update_rank('straight')
+                tmp_besthand = [sorted_values[i + n][1][0] for n in range(5)]
+
+        # check for flush
+        if len(sorted_s) >= 5:
+            self._update_rank('flush')
+            self.best_hand = sorted_s[:5]
+        elif len(sorted_c) >= 5:
+            self._update_rank('flush')
+            self.best_hand = sorted_c[:5]
+        elif len(sorted_h) >= 5:
+            self._update_rank('flush')
+            self.best_hand = sorted_h[:5]
+        elif len(sorted_d) >= 5:
+            self._update_rank('flush')
+            self.best_hand = sorted_d[:5]
+
     def find_best_hand(self) -> None:
-        straight_or_flush = self._is_straight_or_flush()
+        straight_or_flush = self._is_straight_or_flush
         if straight_or_flush == 'royal flush' or straight_or_flush == 'straight flush':
             return None
         if self._is_four_of_a_kind():
@@ -69,19 +112,20 @@ class BestHand:
             sorted_hand = sorted(hand, reverse=True)
             is_flush = False
             is_straight = False
+
             # see if it is flush
             if len(set([card.suit for card in sorted_hand])) == 1:
                 is_flush = True
                 self._update_rank("flush")
+
             # see if it is straight
             sorted_value = [card.value for card in sorted_hand]
             # if it is the special case [A 5 4 3 2], change it to [5 4 3 2 A] to make it the smallest straight
             if sorted_value == [14, 5, 4, 3, 2]:
-                sorted_value = [5, 4, 3, 2, 14]
                 sorted_hand = [sorted_hand[1:], sorted_hand[0]]
                 is_straight = True
                 self._update_rank("straight")
-            elif len(set(sorted_value)) == 5 and (sorted_value[4] - sorted_value[0]) == 4:
+            elif len(set(sorted_value)) == 5 and (sorted_value[0] - sorted_value[4]) == 4:
                 is_straight = True
                 self._update_rank("straight")
             # update the temporary best hand
@@ -99,8 +143,8 @@ class BestHand:
             elif is_flush and self.rank == "flush":
                 if sorted_hand[0] > temp_best_hand[0]:
                     temp_best_hand = sorted_hand
-        if self.rank:
-            if self.rank == 'straight flush' and self.best_hand[0].value == 14:
+        if self.rank in ['straight', 'flush', 'straight flush', 'royal flush']:
+            if self.rank == 'straight flush' and temp_best_hand[0].value == 14:
                 self.rank = "royal flush"
             self.best_hand = temp_best_hand
             return self.rank
@@ -117,7 +161,7 @@ class BestHand:
             # see if it is four of a kind
             if len(set([card.value for card in hand])) == 2:
                 if sorted_hand[0].value != sorted_hand[1].value:
-                    sorted_hand = [sorted_hand[1:], sorted_hand[0]]
+                    sorted_hand = sorted_hand[1:] + sorted_hand[0:1]
                     is_four_of_a_kind = True
                 elif sorted_hand[3].value != sorted_hand[4].value:
                     is_four_of_a_kind = True
@@ -175,23 +219,28 @@ class BestHand:
                     is_three_of_a_kind = True
                 elif len(set([card.value for card in sorted_hand[:4]])) == 2:
                     is_two_pair = True
+                    print('here3')
                 elif len(set([card.value for card in sorted_hand[1:]])) == 2:
                     sorted_hand = sorted_hand[1:] + sorted_hand[:1]
                     is_two_pair = True
+                    print('here2')
                 else:
-                    sorted_hand = sorted_hand[:3] + sorted_hand[3:4] + sorted_hand[-2:]
+                    sorted_hand = sorted_hand[:2] + sorted_hand[3:] + sorted_hand[2:3]
                     is_two_pair = True
+                    print('here3')
             # update the temporary best hand
             if is_three_of_a_kind:
-                if self.rank == 'three of a kind' and (sorted_hand[0].value, sorted_hand[3].value) > (temp_best_hand[0], temp_best_hand[3]):
+                if self.rank == 'three of a kind' and (sorted_hand[0], sorted_hand[3]) > (temp_best_hand[0], temp_best_hand[3]):
                     temp_best_hand = sorted_hand
                 else:
                     self._update_rank("three of a kind")
                     temp_best_hand = sorted_hand
-            if is_two_pair:
-                if self.rank == 'two pair' and (sorted_hand[0].value, sorted_hand[2].value) > (temp_best_hand[0], temp_best_hand[2]):
+            elif is_two_pair:
+                print(sorted_hand)
+                print(temp_best_hand)
+                if self.rank == 'two pair' and (sorted_hand[0], sorted_hand[2]) > (temp_best_hand[0], temp_best_hand[2]):
                     temp_best_hand = sorted_hand
-                elif self.rank == '':
+                elif self.ranking[self.rank] < self.ranking['two pair']:
                     self._update_rank("two pair")
                     temp_best_hand = sorted_hand
         if self.rank == 'full house':
@@ -202,7 +251,18 @@ class BestHand:
         else:
             return False
     def _is_pair(self):
-        return True
+        sorted_hand = sorted(self.pocket + self.board, reverse=True)
+        if len(set([card.value for card in sorted_hand])) == 6:
+            self._update_rank("pair")
+            for i in range(len(sorted_hand)-1):
+                if sorted_hand[i].value == sorted_hand[i+1].value:
+                    if i > 2:
+                        self.best_hand = sorted_hand[i:i+2] + sorted_hand[:3]
+                    else:
+                        self.best_hand = sorted_hand[i:i + 2] + sorted_hand[:i] + sorted_hand[i+2:5]
+            return True
+        else:
+            return False
 
     @staticmethod
     def _is_valid_operand(other):
