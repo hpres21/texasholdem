@@ -32,9 +32,11 @@ class Card:
     def __lt__(self, other):
         if not self._is_valid_operand(other):
             return NotImplemented
-        return self.value < other.valueone
+        return self.value < other.value
 
     def __gt__(self, other):
+        if other == 0:
+            return True
         if not self._is_valid_operand(other):
             return NotImplemented
         return self.value > other.value
