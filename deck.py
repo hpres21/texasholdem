@@ -30,6 +30,8 @@ class Card:
         return self.value == other.value
 
     def __lt__(self, other):
+        if other == 0:
+            return False
         if not self._is_valid_operand(other):
             return NotImplemented
         return self.value < other.value
