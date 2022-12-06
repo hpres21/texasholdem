@@ -58,7 +58,7 @@ class Player:
 
 
 @dataclass
-class Poker_Table:
+class PokerTable:
     """
     Table class stores the information about the cards on the board, stack size, and players in the game.
     """

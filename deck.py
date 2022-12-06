@@ -20,33 +20,31 @@ class Card:
         else:
             return f"{self.face_cards[self.value]}{self.suit}"
 
-    def _is_valid_operand(self, other):
-        return hasattr(other, "value")
-
-
     def __eq__(self, other):
         if not self._is_valid_operand(other):
             return NotImplemented
-        return self.value == other.value
+        return self.value == other.value and self.suit == other.suit
 
     def __lt__(self, other):
-        if other == 0:
-            return False
         if not self._is_valid_operand(other):
             return NotImplemented
-        return self.value < other.value
+        return self.value < other.valueone
 
     def __gt__(self, other):
-        if other == 0:
-            return True
         if not self._is_valid_operand(other):
             return NotImplemented
         return self.value > other.value
-
+    
+    def __hash__(self) -> int:
+        return hash(str(self))
+    
     def same_suit(self, other):
         if not self._is_valid_operand(other):
             return NotImplemented
         return self.suit == other.suit
+    
+    def _is_valid_operand(self, other):
+        return hasattr(other, "value")
 
 
 
@@ -57,20 +55,19 @@ class Deck:
     Class for a deck containing 52 cards
     """
 
-    def __init__(self, ordered = False):
+    def __init__(self):
         values = (2+i for i in range(13))
         suits = ('h', 'c', 's', 'd')
         cards = tuple(itertools.product(values, suits))
-        deck = [Card (v,s) for v,s in cards]
-        if not ordered:
-            random.shuffle(deck)
-        self.deck = deck
+        self.deck = [Card (v,s) for v,s in cards]
+
+    def shuffle(self):
+        random.shuffle(self.deck)
 
     def draw(self):
         return self.deck.pop()
 
-
-if __name__ == "main":
-    """
-    Write tests here
-    """
+    def reset(self, shuffle: bool = False):
+        self.deck = [Card (v,s) for v,s in self.cards]
+        if shuffle:
+            self.shuffle()
