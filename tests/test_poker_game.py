@@ -1,7 +1,7 @@
 import pytest
 import random
 from deck import Card, Deck
-from poker_game import Player, Poker_Table
+from poker_game import Player, PokerTable
 
 n_tests = 10
 
@@ -28,7 +28,7 @@ def test_adding_and_removing_players(unused_parameter):
     """
     players_added = random.randint(2,6)
     players_removed = random.randint(0, players_added - 2)
-    table = Poker_Table()
+    table = PokerTable()
     table.reset()
     for i in range(players_added):
         table.add_player(Player(i))
@@ -42,7 +42,7 @@ def test_drawing_table_cards(unused_parameter):
     """
     flopping and drawing twice should result in a list of 5 cards
     """
-    table = Poker_Table()
+    table = PokerTable()
     table.reset()
     table.flop()
     table.draw_card()
