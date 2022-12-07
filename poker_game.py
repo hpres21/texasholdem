@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from deck import Deck, Card
+from rank import BestHand
 from typing import Union
 
 @dataclass
@@ -53,9 +54,8 @@ class Player:
                 print("Invalid decision.")
                 self.decision(current_bet)
 
-    def best_hand(self, board: list[Card]):
-        ...
-
+    def best_hand(self, board: list[Card])-> BestHand:
+        return BestHand(self.hand, board)
 
 @dataclass
 class PokerTable:
@@ -114,7 +114,13 @@ class PokerTable:
         self.current_bet = 0
         self.deck = Deck()
 
-    def end_round(self)-> None:
-        assert len(self.players) == 1
-        self.players[0].stack += self.pot_size
-        self.end_round()
+    def determine_winner(self) -> Player:
+        game_hands = [p.best_hand() for p in self.players]
+        besthand = max(game_hands)
+        i = game_hands.index(besthand)
+        return self.players[i]
+
+
+    def payout(self, player: Player)-> None:
+        player.stack += self.pot_size
+        #self.end_round()

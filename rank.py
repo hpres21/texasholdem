@@ -1,6 +1,5 @@
 import functools
 import itertools
-import poker_game
 from deck import Card
 
 
@@ -274,9 +273,22 @@ class BestHand:
             return NotImplemented
         return ((self.ranking[self.rank], tuple(self.best_hand)) ==
                 (self.ranking[other.rank], tuple(other.best_hand)))
+    
+    def __neq__(self, other):
+        if not self._is_valid_operand(other):
+            return NotImplemented
+        return ((self.ranking[self.rank], tuple(self.best_hand)) !=
+                (self.ranking[other.rank], tuple(other.best_hand)))
+
 
     def __lt__(self, other):
         if not self._is_valid_operand(other):
             return NotImplemented
         return ((self.ranking[self.rank], tuple(self.best_hand)) <
+                (self.ranking[other.rank], tuple(other.best_hand)))
+    
+    def __gt__(self, other):
+        if not self._is_valid_operand(other):
+            return NotImplemented
+        return ((self.ranking[self.rank], tuple(self.best_hand)) >
                 (self.ranking[other.rank], tuple(other.best_hand)))
