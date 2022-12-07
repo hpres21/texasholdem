@@ -3,6 +3,12 @@ import itertools
 from deck import Card
 
 
+def filter_by_value(value: int, l: list[Card]) -> list[Card]:
+    """"
+    Helper function to find cards in a list specified card value. 
+    """
+    return list(filter(lambda x: x.value == value, l))
+
 @functools.total_ordering
 class BestHand:
     """
@@ -40,72 +46,21 @@ class BestHand:
         if self.ranking[self.rank] < self.ranking[possible_rank]:
             self.rank = possible_rank
 
-
-    def find_best_hand2(self) -> None:
-        sorted_hand = sorted(self.pocket + self.board, reverse=True)
-
-        sorted_values = [[sorted_hand[0].value, {sorted_hand[0]}]]
-        sorted_s = []
-        sorted_c = []
-        sorted_h = []
-        sorted_d = []
-        for card in sorted_hand:
-            if card.value == sorted_values[-1][0]:
-                sorted_values[-1][1].add(card)
-            else:
-                sorted_values.append([card.value, {card}])
-            if card.suit == 's':
-                sorted_s.append(card)
-            elif card.suit == 'c':
-                sorted_c.append(card)
-            elif card.suit == 'h':
-                sorted_h.append(card)
-            else:
-                sorted_d.append(card)
-
-        # check for straight and/or flush
-        for i in range(len(sorted_values)-4):
-            if (sorted_values[i + 4][0] - sorted_values[i][0]) == 4:
-                self._update_rank('straight')
-                tmp_besthand = [sorted_values[i + n][1][0] for n in range(5)]
-
-        # check for flush
-        if len(sorted_s) >= 5:
-            self._update_rank('flush')
-            self.best_hand = sorted_s[:5]
-        elif len(sorted_c) >= 5:
-            self._update_rank('flush')
-            self.best_hand = sorted_c[:5]
-        elif len(sorted_h) >= 5:
-            self._update_rank('flush')
-            self.best_hand = sorted_h[:5]
-        elif len(sorted_d) >= 5:
-            self._update_rank('flush')
-            self.best_hand = sorted_d[:5]
-
+        
     def find_best_hand(self) -> None:
-        straight_or_flush = self._is_straight_or_flush
-        if straight_or_flush == 'royal flush' or straight_or_flush == 'straight flush':
-            return None
-        if self._is_four_of_a_kind():
-            return None
-        if self._is_full_house():
-            return None
-        if straight_or_flush:
-            return None
-        if self._is_three_of_a_kind_or_two_pair():
-            return None
-        if self._is_pair():
+        """"
+        This method runs the checks for each hand ranks and assigns the highest value to the 
+        """
+        self.check_pairings()
+        if self.rank == "four of a kind" or self.rank == "full house":
             return None
         else:
-            self.rank = "high card"
-            self.best_hand = sorted([*self.pocket, *self.board], reverse=True)[:5]
-            return None
+            self._is_straight_or_flush()
 
-    @property
-    def _is_straight_or_flush(self):
-        temp_best_hand = [0]
-        # for all possible combinations
+
+    def is_straight_or_flush(self):
+        temp_best_hand = [Card(0, "u")]
+        # for all possible cmobinations
         for hand in itertools.combinations(self.pocket + self.board, 5):
             # sort it descending
             sorted_hand = sorted(hand, reverse=True)
@@ -150,118 +105,69 @@ class BestHand:
         else:
             return False
 
-    def _is_four_of_a_kind(self):
-        temp_best_hand = [0, 0, 0, 0, 0]
-        # for all possible combinations
-        for hand in itertools.combinations(self.pocket + self.board, 5):
-            is_four_of_a_kind = False
-            # sort it descending
-            sorted_hand = sorted(hand, reverse=True)
-            # see if it is four of a kind
-            if len(set([card.value for card in hand])) == 2:
-                if sorted_hand[0].value != sorted_hand[1].value:
-                    sorted_hand = sorted_hand[1:] + sorted_hand[0:1]
-                    is_four_of_a_kind = True
-                elif sorted_hand[3].value != sorted_hand[4].value:
-                    is_four_of_a_kind = True
-            # update the temporary best hand
-            if is_four_of_a_kind and (sorted_hand[0], sorted_hand[4]) > (temp_best_hand[0], temp_best_hand[4]):
-                self._update_rank("four of a kind")
-                temp_best_hand = sorted_hand
-        if self.rank == 'four of a kind':
-            self.best_hand = temp_best_hand
-            return True
-        else:
-            return False
+    def check_pairings(self) -> None:
+        """"
+        This method identifies four of a kinds, full houses, three of a kinds, 
+        two pair, pairs, and high card hands. It then updates self.handrank
+        and constructs a list of the five best cards which is stored in 
+        self.best_hand.
+        """
+        bh = []
+        pairs = []
+        trips = []
+        quads = []
 
-    def _is_full_house(self):
-        temp_best_hand = [0, 0, 0, 0, 0]
-        # for all possible combinations
-        for hand in itertools.combinations(self.pocket + self.board, 5):
-            is_full_house = False
-            # sort it descending
-            sorted_hand = sorted(hand, reverse=True)
-            # see if it is full house:
-            if len(set([card.value for card in hand])) == 2:
-                if sorted_hand[1].value != sorted_hand[2].value:
-                    sorted_hand = sorted_hand[2:] + sorted_hand[:2]
-                    is_full_house = True
-                elif sorted_hand[2].value != sorted_hand[3].value:
-                    is_full_house = True
-            # update the temporary best hand
-            if is_full_house and (sorted_hand[0], sorted_hand[3]) > (temp_best_hand[0], temp_best_hand[3]):
-                self._update_rank("full house")
-                temp_best_hand = sorted_hand
-        if self.rank == 'full house':
-            self.best_hand = temp_best_hand
-            return True
-        else:
-            return False
-
-    def _is_three_of_a_kind_or_two_pair(self):
-        temp_best_hand = [0]
-        # for all possible combinations
-        for hand in itertools.combinations(self.pocket + self.board, 5):
-            is_three_of_a_kind = False
-            is_two_pair = False
-            # sort it descending
-            sorted_hand = sorted(hand, reverse=True)
-            # see if it is three of a kind:
-            if len(set([card.value for card in hand])) == 3:
-                if len(set([card.value for card in sorted_hand[:3]])) == 1:
-                    is_three_of_a_kind = True
-                elif len(set([card.value for card in sorted_hand[1:4]])) == 1:
-                    sorted_hand = sorted_hand[1:3] + sorted_hand[:1] + sorted_hand[-1:]
-                    is_three_of_a_kind = True
-                elif len(set([card.value for card in sorted_hand[2:]])) == 1:
-                    sorted_hand = sorted_hand[2:] + sorted_hand[:2]
-                    is_three_of_a_kind = True
-                elif len(set([card.value for card in sorted_hand[:4]])) == 2:
-                    is_two_pair = True
-                    print('here3')
-                elif len(set([card.value for card in sorted_hand[1:]])) == 2:
-                    sorted_hand = sorted_hand[1:] + sorted_hand[:1]
-                    is_two_pair = True
-                    print('here2')
-                else:
-                    sorted_hand = sorted_hand[:2] + sorted_hand[3:] + sorted_hand[2:3]
-                    is_two_pair = True
-                    print('here3')
-            # update the temporary best hand
-            if is_three_of_a_kind:
-                if self.rank == 'three of a kind' and (sorted_hand[0], sorted_hand[3]) > (temp_best_hand[0], temp_best_hand[3]):
-                    temp_best_hand = sorted_hand
-                else:
-                    self._update_rank("three of a kind")
-                    temp_best_hand = sorted_hand
-            elif is_two_pair:
-                print(sorted_hand)
-                print(temp_best_hand)
-                if self.rank == 'two pair' and (sorted_hand[0], sorted_hand[2]) > (temp_best_hand[0], temp_best_hand[2]):
-                    temp_best_hand = sorted_hand
-                elif self.ranking[self.rank] < self.ranking['two pair']:
-                    self._update_rank("two pair")
-                    temp_best_hand = sorted_hand
-        if self.rank == 'full house':
-            self.best_hand = temp_best_hand
-        if self.rank == 'two pair':
-            self.best_hand = temp_best_hand
-            return True
-        else:
-            return False
-    def _is_pair(self):
         sorted_hand = sorted(self.pocket + self.board, reverse=True)
-        if len(set([card.value for card in sorted_hand])) == 6:
+        hand_values = map(lambda x: x.value, sorted_hand)
+
+        for hand, group in itertools.groupby(hand_values):
+            count = sum(1 for _ in group)
+            if count == 2:
+                pairs.append(hand)
+            elif count == 3:
+                trips.append(hand)
+            elif count == 4:
+                quads.append(hand)
+
+        if len(quads) > 0:
+            self._update_rank("four of a kind")
+            bh.extend(filter_by_value(quads[0], sorted_hand))
+
+        elif len(trips) > 0 and len(trips + pairs) >= 2:
+            self._update_rank("full house")
+            bh.extend(filter_by_value(trips[0], sorted_hand))
+            if len(trips) == 2:
+                bh.extend(filter_by_value(trips[1], sorted_hand))
+                bh = bh[:-1]
+            else:
+                bh.extend(filter_by_value(pairs[0], sorted_hand))
+                    
+        elif len(trips) == 1:
+            self._update_rank("three of a kind")
+            bh.extend(filter_by_value(trips[0], sorted_hand))
+            
+
+        elif len(pairs) >= 2:
+            self._update_rank("two pair")
+            for p in pairs:
+                bh.extend(filter_by_value(p, sorted_hand))
+            
+
+        elif len(pairs) == 1:
             self._update_rank("pair")
-            for i in range(len(sorted_hand)-1):
-                if sorted_hand[i].value == sorted_hand[i+1].value:
-                    if i > 2:
-                        self.best_hand = sorted_hand[i:i+2] + sorted_hand[:3]
-                    else:
-                        self.best_hand = sorted_hand[i:i + 2] + sorted_hand[:i] + sorted_hand[i+2:5]
-            return True
+            bh.extend(filter_by_value(pairs[0], sorted_hand))
+            
+
         else:
-            return False
+            self._update_rank("high card")
+
+        i = 0
+        while len(bh) < 5:
+            if sorted_hand[i] not in bh:
+                bh.append(sorted_hand[i])
+            i+=1
+        
+        self.best_hand = bh
 
     @staticmethod
     def _is_valid_operand(other):
