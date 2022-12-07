@@ -131,8 +131,7 @@ class BestHand:
 
         if len(quads) > 0:
             self._update_rank("four of a kind")
-            bh.extend(filter_by_value(quads[0], sorted_hand))
-
+            bh.extend(filter_by_value(quads[0], sorted_hand)
         elif len(trips) > 0 and len(trips + pairs) >= 2:
             self._update_rank("full house")
             bh.extend(filter_by_value(trips[0], sorted_hand))
@@ -140,24 +139,17 @@ class BestHand:
                 bh.extend(filter_by_value(trips[1], sorted_hand))
                 bh = bh[:-1]
             else:
-                bh.extend(filter_by_value(pairs[0], sorted_hand))
-                    
+                bh.extend(filter_by_value(pairs[0], sorted_hand))         
         elif len(trips) == 1:
             self._update_rank("three of a kind")
             bh.extend(filter_by_value(trips[0], sorted_hand))
-            
-
         elif len(pairs) >= 2:
             self._update_rank("two pair")
             for p in pairs:
                 bh.extend(filter_by_value(p, sorted_hand))
-            
-
         elif len(pairs) == 1:
             self._update_rank("pair")
             bh.extend(filter_by_value(pairs[0], sorted_hand))
-            
-
         else:
             self._update_rank("high card")
 
@@ -166,7 +158,6 @@ class BestHand:
             if sorted_hand[i] not in bh:
                 bh.append(sorted_hand[i])
             i+=1
-        
         self.best_hand = bh
 
     @staticmethod
