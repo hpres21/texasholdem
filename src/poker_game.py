@@ -117,7 +117,7 @@ class PokerTable:
         self.deck = Deck()
 
     def determine_winner(self) -> Player:
-        game_hands = [p.best_hand() for p in self.players]
+        game_hands = [p.best_hand(self.board) for p in self.players]
         besthand = max(game_hands)
         i = game_hands.index(besthand)
         return self.players[i]
