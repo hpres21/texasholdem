@@ -120,26 +120,28 @@ class BestHand:
         sorted_hand = sorted(self.pocket + self.board, reverse=True)
         hand_values = map(lambda x: x.value, sorted_hand)
 
-        for hand, group in itertools.groupby(hand_values):
+        for num, group in itertools.groupby(hand_values):
             count = sum(1 for _ in group)
             if count == 2:
-                pairs.append(hand)
+                pairs.append(num)
             elif count == 3:
-                trips.append(hand)
+                trips.append(num)
             elif count == 4:
-                quads.append(hand)
+                quads.append(num)
 
         if len(quads) > 0:
             self._update_rank("four of a kind")
-            bh.extend(filter_by_value(quads[0], sorted_hand)
+            bh.extend(filter_by_value(quads[0], sorted_hand))
         elif len(trips) > 0 and len(trips + pairs) >= 2:
             self._update_rank("full house")
             bh.extend(filter_by_value(trips[0], sorted_hand))
             if len(trips) == 2:
                 bh.extend(filter_by_value(trips[1], sorted_hand))
                 bh = bh[:-1]
+                # if there are 2 trips, we need to choose the higher trip in the full house
             else:
-                bh.extend(filter_by_value(pairs[0], sorted_hand))         
+                bh.extend(filter_by_value(pairs[0], sorted_hand))
+                # if there are 1 trip and 2 two pairs, we need to choose the higher two pair
         elif len(trips) == 1:
             self._update_rank("three of a kind")
             bh.extend(filter_by_value(trips[0], sorted_hand))
@@ -147,6 +149,8 @@ class BestHand:
             self._update_rank("two pair")
             for p in pairs:
                 bh.extend(filter_by_value(p, sorted_hand))
+            # if there are 3 pairs, bh will have 6 cards;
+            # also we need higher pairs to come first in bh in order to properly compare different hands
         elif len(pairs) == 1:
             self._update_rank("pair")
             bh.extend(filter_by_value(pairs[0], sorted_hand))
