@@ -42,8 +42,9 @@ class Card:
         if not self._is_valid_operand(other):
             return NotImplemented
         return self.suit == other.suit
-    
-    def _is_valid_operand(self, other):
+
+    @staticmethod
+    def _is_valid_operand(other):
         return hasattr(other, "value")
 
 
