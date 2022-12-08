@@ -3,12 +3,6 @@ import itertools
 from deck import Card
 
 
-# def filter_by_value(value: int, l: list[Card]) -> list[Card]:
-#     """"
-#     Helper function to find cards in a list specified card value.
-#     """
-#     return list(filter(lambda x: x.value == value, l))
-
 @functools.total_ordering
 class BestHand:
     """
@@ -30,22 +24,22 @@ class BestHand:
         """
         self.__pocket = pocket
         self.__board = board
-        self.rank = None
+        self.rank = ''
         self.best_hand: list[Card]
         self.pocket_pos: list[int]
 
         self._find_best_hand()
 
-    # def __init__(self, player: Player, table: Table):
-    #     self.pocket = player.hand
-    #     self.table = table.board
-
-    def _update_rank(self, new_rank: str):
+    def _update_rank(self, new_rank: str) -> bool:
         assert new_rank in self._ranking, f'{new_rank} is not in ranking dictionary.'
         if not self.rank:
             self.rank = new_rank
-        if self._ranking[self.rank] < self._ranking[new_rank]:
+            return True
+        elif self._ranking[self.rank] < self._ranking[new_rank]:
             self.rank = new_rank
+            return True
+        else:
+            return False
 
     def _find_best_hand(self) -> None:
         """"
@@ -53,13 +47,14 @@ class BestHand:
         """
         self._check_pairings()
         if self.rank == "four of a kind" or self.rank == "full house":
+            self.pocket_pos = [self.best_hand.index(card) for card in self.__pocket]
             return None
         else:
             self._check_straight_or_flush()
+            self.pocket_pos = [self.best_hand.index(card) for card in self.__pocket]
             return None
 
     def _check_straight_or_flush(self):
-        bh = [Card(0, "u")]
         # for all possible combinations
         for hand in itertools.combinations(self.__pocket + self.__board, 5):
             # sort it descending
@@ -70,18 +65,17 @@ class BestHand:
             # see if it is flush
             if len(set([card.suit for card in sorted_hand])) == 1:
                 is_flush = True
-                self._update_rank("flush")
 
             # see if it is straight
             sorted_value = [card.value for card in sorted_hand]
+
             # if it is the special case [A 5 4 3 2], change it to [5 4 3 2 A] to make it the smallest straight
             if sorted_value == [14, 5, 4, 3, 2]:
                 sorted_hand = [sorted_hand[1:], sorted_hand[0]]
                 is_straight = True
-                self._update_rank("straight")
             elif len(set(sorted_value)) == 5 and (sorted_value[0] - sorted_value[4]) == 4:
                 is_straight = True
-                self._update_rank("straight")
+
             # update bh
             if is_straight:
                 if is_flush:
@@ -91,19 +85,21 @@ class BestHand:
                     else:
                         self._update_rank("straight flush")
                         bh = sorted_hand
-                elif self.rank == "straight":
-                    if sorted_hand[0] > bh[0]:
+                else:
+                    if self.rank == "straight" and sorted_hand[0] > bh[0]:
                         bh = sorted_hand
-            elif is_flush and self.rank == "flush":
-                if sorted_hand[0] > bh[0]:
+                    elif self._update_rank("straight"):
+                        bh = sorted_hand
+            elif is_flush:
+                if self.rank == "flush" and sorted_hand[0] > bh[0]:
+                    bh = sorted_hand
+                elif self._update_rank("flush"):
                     bh = sorted_hand
         if self.rank in ['straight', 'flush', 'straight flush', 'royal flush']:
             if self.rank == 'straight flush' and bh[0].value == 14:
                 self.rank = "royal flush"
             self.best_hand = bh
-            return self.rank
-        else:
-            return False
+        return None
 
     def _check_pairings(self) -> None:
         """
@@ -118,7 +114,6 @@ class BestHand:
         quads = []
 
         sorted_hand = sorted(self.__pocket + self.__board, reverse=True)
-        # hand_values = map(lambda x: x.value, sorted_hand)
 
         for num, group in itertools.groupby(sorted_hand, lambda card: card.value):
             count = sum(1 for _ in group)
@@ -148,8 +143,6 @@ class BestHand:
         elif len(pairs) >= 2:
             self._update_rank("two pair")
             bh.extend(pairs[0][1] + pairs[1][1])
-            # if there are 3 pairs, bh will have 6 cards;
-            # also we need higher pairs to come first in bh in order to properly compare different hands
         elif len(pairs) == 1:
             self._update_rank("pair")
             bh.extend(pairs[0][1])
