@@ -55,6 +55,7 @@ class BestHand:
             return None
 
     def _check_straight_or_flush(self):
+        temp_bh = [Card(0, "u")]
         # for all possible combinations
         for hand in itertools.combinations(self.__pocket + self.__board, 5):
             # sort it descending
@@ -76,29 +77,29 @@ class BestHand:
             elif len(set(sorted_value)) == 5 and (sorted_value[0] - sorted_value[4]) == 4:
                 is_straight = True
 
-            # update bh
+            # update temp_bh
             if is_straight:
                 if is_flush:
                     if self.rank == "straight flush":
-                        if sorted_hand[0] > bh[0]:
-                            bh = sorted_hand
+                        if sorted_hand[0] > temp_bh[0]:
+                            temp_bh = sorted_hand
                     else:
                         self._update_rank("straight flush")
-                        bh = sorted_hand
+                        temp_bh = sorted_hand
                 else:
-                    if self.rank == "straight" and sorted_hand[0] > bh[0]:
-                        bh = sorted_hand
+                    if self.rank == "straight" and sorted_hand[0] > temp_bh[0]:
+                        temp_bh = sorted_hand
                     elif self._update_rank("straight"):
-                        bh = sorted_hand
+                        temp_bh = sorted_hand
             elif is_flush:
-                if self.rank == "flush" and sorted_hand[0] > bh[0]:
-                    bh = sorted_hand
+                if self.rank == "flush" and sorted_hand[0] > temp_bh[0]:
+                    temp_bh = sorted_hand
                 elif self._update_rank("flush"):
-                    bh = sorted_hand
+                    temp_bh = sorted_hand
         if self.rank in ['straight', 'flush', 'straight flush', 'royal flush']:
-            if self.rank == 'straight flush' and bh[0].value == 14:
+            if self.rank == 'straight flush' and temp_bh[0].value == 14:
                 self.rank = "royal flush"
-            self.best_hand = bh
+            self.best_hand = temp_bh
         return None
 
     def _check_pairings(self) -> None:
