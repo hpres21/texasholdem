@@ -41,7 +41,7 @@ class BestHand:
         else:
             return False
 
-    def _find_best_hand(self) -> None:
+    def find_best_hand(self) -> None:
         """"
         This method runs the checks for each hand ranks and assigns the highest value to self.best_hand
         """
