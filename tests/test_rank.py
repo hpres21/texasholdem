@@ -1,4 +1,3 @@
-import pytest
 import itertools
 from src.deck import Card, Deck
 from src.rank import BestHand
@@ -105,6 +104,7 @@ def test_straight():
     assert bh.best_hand == [Card(value=10, suit='s'), Card(value=9, suit='s'), Card(value=8, suit='h'),
                             Card(value=7, suit='h'), Card(value=6, suit='d')]
 
+
 def test_three_of_a_kind():
     """
     should give 'three_of_a_kind' as a result of best hand
@@ -116,7 +116,9 @@ def test_three_of_a_kind():
     bh = BestHand(pocket, board)
     assert bh.rank == 'three of a kind'
     assert bh.best_hand in [x + [Card(value=9, suit='s'), Card(value=7, suit='h')] for x in
-                            itertools.permutations([Card(value=8, suit='s'), Card(value=8, suit='h'), Card(value=8, suit='d')]
+                            itertools.permutations(
+                                [Card(value=8, suit='s'), Card(value=8, suit='h'), Card(value=8, suit='d')])]
+
 
 def test_two_pair():
     """
@@ -129,8 +131,9 @@ def test_two_pair():
     bh = BestHand(pocket, board)
     assert bh.rank == 'two pair'
     assert bh.best_hand in [x + y + [Card(value=9, suit='s')] for x, y in
-                            itertools.product(itertools.permutations([Card(value=8, suit='s'), Card(value=8, suit='h')]),
-                                              itertools.permutations([Card(value=7, suit='d'), Card(value=7, suit='h')]))]
+                            itertools.product(
+                                itertools.permutations([Card(value=8, suit='s'), Card(value=8, suit='h')]),
+                                itertools.permutations([Card(value=7, suit='d'), Card(value=7, suit='h')]))]
 
 
 def test_pair():
