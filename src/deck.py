@@ -8,8 +8,9 @@ import random
 @functools.total_ordering
 class Card:
     """
-    Class for a card in poker. Each card has a value (2-10, J, Q, K, A) and a suit (s, c, h, d).
-    Values are stored as integers, where J = 11... A = 14.
+    Class for a card in poker. Each card has a value (2-10, J, Q, K, A) and
+     a suit (s, c, h, d). All values are stored as integers, where face cards
+     are stored as: J = 11... A = 14.
     """
 
     value: int

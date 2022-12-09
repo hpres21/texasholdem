@@ -26,7 +26,9 @@ class BestHand:
     def __init__(self, pocket: list[Card], board: list[Card]):
         """
         Automatically find the best hand upon initialization.
-        The best hand of a player, is in the list 'BestHand(pocket, board).best_hand', or equivalently
+        The best hand of a player, is in the list
+        'BestHand(pocket, board).best_hand', or equivalently:
+
         A = BestHand(pocket, board)
         A.best_hand
 
@@ -41,7 +43,9 @@ class BestHand:
         self._find_best_hand()
 
     def _update_rank(self, new_rank: str) -> bool:
-        assert new_rank in self._ranking, f"{new_rank} is not in ranking dictionary."
+        assert (
+            new_rank in self._ranking
+        ), f"{new_rank} is not in ranking dictionary."
         if not self.rank:
             self.rank = new_rank
             return True
@@ -53,15 +57,20 @@ class BestHand:
 
     def find_best_hand(self) -> None:
         """ "
-        This method runs the checks for each hand ranks and assigns the highest value to self.best_hand
+        This method runs the checks for each hand ranks and assigns the
+        highest value to self.best_hand.
         """
         self._check_pairings()
         if self.rank == "four of a kind" or self.rank == "full house":
-            self.pocket_pos = [self.best_hand.index(card) for card in self.__pocket]
+            self.pocket_pos = [
+                self.best_hand.index(card) for card in self.__pocket
+            ]
             return None
         else:
             self._check_straight_or_flush()
-            self.pocket_pos = [self.best_hand.index(card) for card in self.__pocket]
+            self.pocket_pos = [
+                self.best_hand.index(card) for card in self.__pocket
+            ]
             return None
 
     def _check_straight_or_flush(self):
@@ -80,12 +89,14 @@ class BestHand:
             # see if it is straight
             sorted_value = [card.value for card in sorted_hand]
 
-            # if it is the special case [A 5 4 3 2], change it to [5 4 3 2 A] to make it the smallest straight
+            # if it is the special case [A 5 4 3 2], change it to
+            # [5 4 3 2 A] to make it the smallest straight
             if sorted_value == [14, 5, 4, 3, 2]:
                 sorted_hand = [sorted_hand[1:], sorted_hand[0]]
                 is_straight = True
             elif (
-                len(set(sorted_value)) == 5 and (sorted_value[0] - sorted_value[4]) == 4
+                len(set(sorted_value)) == 5
+                and (sorted_value[0] - sorted_value[4]) == 4
             ):
                 is_straight = True
 
@@ -128,7 +139,9 @@ class BestHand:
 
         sorted_hand = sorted(self.__pocket + self.__board, reverse=True)
 
-        for num, group in itertools.groupby(sorted_hand, lambda card: card.value):
+        for num, group in itertools.groupby(
+            sorted_hand, lambda card: card.value
+        ):
             count = sum(1 for _ in group)
             if count == 2:
                 pairs.append((num, list(group)))

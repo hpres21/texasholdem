@@ -12,7 +12,9 @@ class Player:
     current_decision: Union[int, str, None] = None
 
     def __repr__(self) -> str:
-        return str((self.stack, self.bet_this_round, self.current_decision, self.hand))
+        return str(
+            (self.stack, self.bet_this_round, self.current_decision, self.hand)
+        )
 
     def draw_hand(self, deck: Deck) -> None:
         self.hand = [deck.draw() for _ in range(2)]
@@ -25,7 +27,8 @@ class Player:
         Decision method prompts the user to choose an action for their turn.
         """
         action = input(
-            f"You have {self.stack}, the current bet is {current_bet}. Please make a decision: "
+            f"You have {self.stack}. The current bet is {current_bet}. "
+            "Please make a decision: "
         )
         try:
             action = int(action)
@@ -64,7 +67,8 @@ class Player:
 @dataclass
 class PokerTable:
     """
-    Table class stores the information about the cards on the board, stack size, and players in the game.
+    Table class stores the information about the cards on the board,
+    stack size, and players in the game.
     """
 
     max_num_players: int = 6
@@ -102,7 +106,8 @@ class PokerTable:
 
     def process_decision(self, player: Player) -> None:
         """
-        Update table based on player's decision. All actions involve a bet >= 0, or a fold.
+        Update table based on player's decision.
+        All actions involve a bet >= 0, or a fold.
         """
         if player.current_decision == "FOLD":
             print("folding")
