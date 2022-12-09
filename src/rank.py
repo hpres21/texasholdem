@@ -27,8 +27,8 @@ class BestHand:
         """
         Automatically find the best hand upon initialization.
         The best hand of a player, is in the list 'BestHand(pocket, board).best_hand', or equivalently
-        player_A = BestHand(pocket, board)
-        player_A.best_hand
+        A = BestHand(pocket, board)
+        A.best_hand
 
         Pocket cards are player_A.best_hand[player_A.pocket_pos].
         """
@@ -65,7 +65,7 @@ class BestHand:
             return None
 
     def _check_straight_or_flush(self):
-        temp_bh = [Card(0, "u")]
+        temp_bh = []
         # for all possible combinations
         for hand in itertools.combinations(self.__pocket + self.__board, 5):
             # sort it descending
