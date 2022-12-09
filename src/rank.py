@@ -8,30 +8,40 @@ class BestHand:
     """
     Class for the best hand for a player.
     """
-    _ranking = {None: -1, "high card": 0, "pair": 1, "two pair": 2, "three of a kind": 3,
-                "straight": 4, "flush": 5, "full house": 6, "four of a kind": 7,
-                "straight flush": 8, "royal flush": 9
-                }
+
+    _ranking = {
+        None: -1,
+        "high card": 0,
+        "pair": 1,
+        "two pair": 2,
+        "three of a kind": 3,
+        "straight": 4,
+        "flush": 5,
+        "full house": 6,
+        "four of a kind": 7,
+        "straight flush": 8,
+        "royal flush": 9,
+    }
 
     def __init__(self, pocket: list[Card], board: list[Card]):
         """
-        Automatically find the best hand upon initialization. 
+        Automatically find the best hand upon initialization.
         The best hand of a player, is in the list 'BestHand(pocket, board).best_hand', or equivalently
         player_A = BestHand(pocket, board)
         player_A.best_hand
-        
+
         Pocket cards are player_A.best_hand[player_A.pocket_pos].
         """
         self.__pocket = pocket
         self.__board = board
-        self.rank = ''
+        self.rank = ""
         self.best_hand: list[Card]
         self.pocket_pos: list[int]
 
         self._find_best_hand()
 
     def _update_rank(self, new_rank: str) -> bool:
-        assert new_rank in self._ranking, f'{new_rank} is not in ranking dictionary.'
+        assert new_rank in self._ranking, f"{new_rank} is not in ranking dictionary."
         if not self.rank:
             self.rank = new_rank
             return True
@@ -42,7 +52,7 @@ class BestHand:
             return False
 
     def find_best_hand(self) -> None:
-        """"
+        """ "
         This method runs the checks for each hand ranks and assigns the highest value to self.best_hand
         """
         self._check_pairings()
@@ -64,7 +74,7 @@ class BestHand:
             is_straight = False
 
             # see if it is flush
-            if len(set([card.suit for card in sorted_hand])) == 1:
+            if len({card.suit for card in sorted_hand}) == 1:
                 is_flush = True
 
             # see if it is straight
@@ -74,7 +84,9 @@ class BestHand:
             if sorted_value == [14, 5, 4, 3, 2]:
                 sorted_hand = [sorted_hand[1:], sorted_hand[0]]
                 is_straight = True
-            elif len(set(sorted_value)) == 5 and (sorted_value[0] - sorted_value[4]) == 4:
+            elif (
+                len(set(sorted_value)) == 5 and (sorted_value[0] - sorted_value[4]) == 4
+            ):
                 is_straight = True
 
             # update temp_bh
@@ -96,17 +108,17 @@ class BestHand:
                     temp_bh = sorted_hand
                 elif self._update_rank("flush"):
                     temp_bh = sorted_hand
-        if self.rank in ['straight', 'flush', 'straight flush', 'royal flush']:
-            if self.rank == 'straight flush' and temp_bh[0].value == 14:
+        if self.rank in ["straight", "flush", "straight flush", "royal flush"]:
+            if self.rank == "straight flush" and temp_bh[0].value == 14:
                 self.rank = "royal flush"
             self.best_hand = temp_bh
         return None
 
     def _check_pairings(self) -> None:
         """
-        This method identifies four of a kinds, full houses, three of a kinds, 
+        This method identifies four of a kinds, full houses, three of a kinds,
         two pair, pairs, and high card hands. It then updates self.rank
-        and constructs a list of the five best cards which is stored in 
+        and constructs a list of the five best cards which is stored in
         self.best_hand.
         """
         bh = []
@@ -160,29 +172,36 @@ class BestHand:
 
     @staticmethod
     def _is_valid_operand(other):
-        return (hasattr(other, "best_hand") and
-                hasattr(other, "rank"))
+        return hasattr(other, "best_hand") and hasattr(other, "rank")
 
     def __eq__(self, other):
         if not self._is_valid_operand(other):
             return NotImplemented
-        return ((self._ranking[self.rank], tuple(self.best_hand)) ==
-                (self._ranking[other.rank], tuple(other.best_hand)))
+        return (self._ranking[self.rank], tuple(self.best_hand)) == (
+            self._ranking[other.rank],
+            tuple(other.best_hand),
+        )
 
     def __ne__(self, other):
         if not self._is_valid_operand(other):
             return NotImplemented
-        return ((self._ranking[self.rank], tuple(self.best_hand)) !=
-                (self._ranking[other.rank], tuple(other.best_hand)))
+        return (self._ranking[self.rank], tuple(self.best_hand)) != (
+            self._ranking[other.rank],
+            tuple(other.best_hand),
+        )
 
     def __lt__(self, other):
         if not self._is_valid_operand(other):
             return NotImplemented
-        return ((self._ranking[self.rank], tuple(self.best_hand)) <
-                (self._ranking[other.rank], tuple(other.best_hand)))
+        return (self._ranking[self.rank], tuple(self.best_hand)) < (
+            self._ranking[other.rank],
+            tuple(other.best_hand),
+        )
 
     def __gt__(self, other):
         if not self._is_valid_operand(other):
             return NotImplemented
-        return ((self._ranking[self.rank], tuple(self.best_hand)) >
-                (self._ranking[other.rank], tuple(other.best_hand)))
+        return (self._ranking[self.rank], tuple(self.best_hand)) > (
+            self._ranking[other.rank],
+            tuple(other.best_hand),
+        )

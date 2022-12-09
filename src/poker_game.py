@@ -24,7 +24,9 @@ class Player:
         """
         Decision method prompts the user to choose an action for their turn.
         """
-        action = input(f"You have {self.stack}, the current bet is {current_bet}. Please make a decision: ")
+        action = input(
+            f"You have {self.stack}, the current bet is {current_bet}. Please make a decision: "
+        )
         try:
             action = int(action)
             if action >= 2 * current_bet and action <= self.stack:
@@ -64,6 +66,7 @@ class PokerTable:
     """
     Table class stores the information about the cards on the board, stack size, and players in the game.
     """
+
     max_num_players: int = 6
     big_blind: int = 2
     pot_size: int = 0
@@ -107,7 +110,11 @@ class PokerTable:
         elif type(player.current_decision) == int:
             self.pot_size += player.current_decision
             player.stack -= player.current_decision
-            self.current_bet = player.bet_this_round if player.bet_this_round > self.current_bet else self.current_bet
+            self.current_bet = (
+                player.bet_this_round
+                if player.bet_this_round > self.current_bet
+                else self.current_bet
+            )
 
     def reset(self) -> None:
         self.pot_size = 0
