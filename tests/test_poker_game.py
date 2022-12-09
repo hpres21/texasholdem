@@ -21,7 +21,7 @@ def test_player_hand():
     assert len(deck.deck) == 0
 
 
-@pytest.mark.parametrize("unused_parameter", range(n_tests))
+@pytest.mark.parametrize("unused_parameter", list(range(n_tests)))
 def test_adding_and_removing_players(unused_parameter):
     """
     adding x players to a table and then later removing y players should result
@@ -38,7 +38,7 @@ def test_adding_and_removing_players(unused_parameter):
     assert len(table.players) == players_added - players_removed
 
 
-@pytest.mark.parametrize("unused_parameter", range(n_tests))
+@pytest.mark.parametrize("unused_parameter", list(range(n_tests)))
 def test_drawing_table_cards(unused_parameter):
     """
     flopping and drawing twice should result in a list of 5 cards

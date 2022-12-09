@@ -1,4 +1,3 @@
-import pytest
 import itertools
 from src.deck import Card, Deck
 from src.rank import BestHand
