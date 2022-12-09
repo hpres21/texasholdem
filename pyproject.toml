@@ -1,1 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
+[project]
+name = "src"
+version = "0.1.0"
+description = "Texas Hold'em game"
+authors = [
+	{name = "Henry Prestegaard", email = "pp8023@princeton.edu"},
+    {name = "Jiachen Li", email = "jiachenl@princeton.edu"},
+    {name = "Jonothan Palafoutas", email = "jpalafou@princeton.edu"}
+	]
+license = {file = "LICENSE"}
+readme = "README.md"
+requires-python = ">=3.7"
+
+[project.optional-dependencies]
+test = [
+	"pytest",
+]

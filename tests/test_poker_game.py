@@ -5,6 +5,7 @@ from src.poker_game import Player, PokerTable
 
 n_tests = 10
 
+
 def test_player_hand():
     """
     when a player draws a hand from a deck 26 times, every hand should be two
@@ -26,7 +27,7 @@ def test_adding_and_removing_players(unused_parameter):
     adding x players to a table and then later removing y players should result
     in a table with x - y players
     """
-    players_added = random.randint(2,6)
+    players_added = random.randint(2, 6)
     players_removed = random.randint(0, players_added - 2)
     table = PokerTable()
     table.reset()

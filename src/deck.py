@@ -3,6 +3,7 @@ import itertools
 import functools
 import random
 
+
 @dataclass(repr=False, eq=False, frozen=True)
 @functools.total_ordering
 class Card:
@@ -10,6 +11,7 @@ class Card:
     Class for a card in poker. Each card has a value (2-10, J, Q, K, A) and a suit (s, c, h, d).
     Values are stored as integers, where J = 11... A = 14.
     """
+
     value: int
     suit: str
     face_cards = {11: "J", 12: "Q", 13: "K", 14: "A"}
@@ -34,10 +36,10 @@ class Card:
         if not self._is_valid_operand(other):
             return NotImplemented
         return self.value > other.value
-    
+
     def __hash__(self) -> int:
         return hash(str(self))
-    
+
     def same_suit(self, other):
         if not self._is_valid_operand(other):
             return NotImplemented
@@ -48,8 +50,6 @@ class Card:
         return hasattr(other, "value")
 
 
-
-
 @dataclass()
 class Deck:
     """
@@ -57,10 +57,10 @@ class Deck:
     """
 
     def __init__(self):
-        values = (2+i for i in range(13))
-        suits = ('h', 'c', 's', 'd')
+        values = (2 + i for i in range(13))
+        suits = ("h", "c", "s", "d")
         cards = tuple(itertools.product(values, suits))
-        self.deck = [Card (v,s) for v,s in cards]
+        self.deck = [Card(v, s) for v, s in cards]
 
     def shuffle(self):
         random.shuffle(self.deck)
@@ -69,6 +69,6 @@ class Deck:
         return self.deck.pop()
 
     def reset(self, shuffle: bool = False):
-        self.deck = [Card (v,s) for v,s in self.cards]
+        self.deck = [Card(v, s) for v, s in self.cards]
         if shuffle:
             self.shuffle()
