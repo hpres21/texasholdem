@@ -9,7 +9,7 @@ description = "Texas Hold'em game"
 authors = [
 	{name = "Henry Prestegaard", email = "pp8023@princeton.edu"},
     {name = "Jiachen Li", email = "jiachenl@princeton.edu"},
-    {name = "Jonothan Palafoutas" email = "jpalafou@princeton.edu"}
+    {name = "Jonothan Palafoutas", email = "jpalafou@princeton.edu"}
 	]
 license = {file = "LICENSE"}
 readme = "README.md"
