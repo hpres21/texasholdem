@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from deck import Deck, Card
-from rank import BestHand
+from src.deck import Deck, Card
+from src.rank import BestHand
 from typing import Union
 
 

@@ -1,6 +1,6 @@
 import functools
 import itertools
-from deck import Card
+from src.deck import Card
 
 
 @functools.total_ordering
