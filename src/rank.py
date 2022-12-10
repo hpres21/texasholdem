@@ -40,7 +40,7 @@ class BestHand:
         self.best_hand: list[Card]
         self.pocket_pos: list[int]
 
-        self._find_best_hand()
+        self.find_best_hand()
 
     def _update_rank(self, new_rank: str) -> bool:
         assert (
