@@ -161,21 +161,21 @@ class BestHand:
             bh.extend(quads[0][1])
         elif len(trips) > 0 and len(trips + pairs) >= 2:
             self._update_rank("full house")
-            bh.extend(trips[0][1])
+            bh.extend(trips[0])
             if len(trips) == 2:
-                bh.extend(trips[1][1])
+                bh.extend(trips[1])
                 bh = bh[:-1]
             else:
-                bh.extend(pairs[0][1])
+                bh.extend(pairs[0])
         elif len(trips) == 1:
             self._update_rank("three of a kind")
-            bh.extend(trips[0][1])
+            bh.extend(trips[0])
         elif len(pairs) >= 2:
             self._update_rank("two pair")
-            bh.extend(pairs[0][1] + pairs[1][1])
+            bh.extend(pairs[0] + pairs[1])
         elif len(pairs) == 1:
             self._update_rank("pair")
-            bh.extend(pairs[0][1])
+            bh.extend(pairs[0])
         else:
             self._update_rank("high card")
 
