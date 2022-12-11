@@ -67,7 +67,7 @@ def test_four_of_a_kind():
     bh = BestHand(pocket, board)
     assert bh.rank == "four of a kind"
     assert bh.best_hand in [
-        x + y
+        list(x + y)
         for x, y in itertools.product(
             itertools.permutations(
                 [
@@ -77,7 +77,7 @@ def test_four_of_a_kind():
                     Card(value=10, suit="c"),
                 ]
             ),
-            itertools.permutations(
+            itertools.product(
                 [Card(value=9, suit="d"), Card(value=9, suit="s")]
             ),
         )
