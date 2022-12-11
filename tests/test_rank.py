@@ -100,7 +100,7 @@ def test_full_house_case1():
     bh = BestHand(pocket, board)
     assert bh.rank == "full house"
     assert bh.best_hand in [
-        x + y
+        list(x + y)
         for x, y in itertools.product(
             itertools.permutations(
                 [
@@ -137,7 +137,7 @@ def test_full_house_case2():
     bh = BestHand(pocket, board)
     assert bh.rank == "full house"
     assert bh.best_hand in [
-        x + y
+        list(x + y)
         for x, y in itertools.product(
             itertools.permutations(
                 [
@@ -168,13 +168,19 @@ def test_flush():
 
     bh = BestHand(pocket, board)
     assert bh.rank == "flush"
-    assert bh.best_hand == [
-        Card(value=10, suit="s"),
-        Card(value=9, suit="s"),
-        Card(value=8, suit="s"),
-        Card(value=3, suit="s"),
-        Card(value=2, suit="s"),
+    assert bh.best_hand in [
+        list(x)
+        for x in itertools.permutations(
+                [
+                    Card(value=10, suit="s"),
+                    Card(value=3, suit="s"),
+                    Card(value=8, suit="s"),
+                    Card(value=9, suit="s"),
+                    Card(value=2, suit="s"),
+                ]
+            )
     ]
+
 
 
 def test_straight():
@@ -205,7 +211,7 @@ def test_three_of_a_kind():
     """
     should give 'three_of_a_kind' as a result of best hand
     """
-    pocket = [Card(value=8, suit="s"), Card(value=8, suit="h")]
+    pocket = [Card(value=3, suit="c"), Card(value=5, suit="h")]
     board = [
         Card(value=8, suit="d"),
         Card(value=9, suit="s"),
@@ -217,14 +223,21 @@ def test_three_of_a_kind():
     bh = BestHand(pocket, board)
     assert bh.rank == "three of a kind"
     assert bh.best_hand in [
-        x + [Card(value=9, suit="s"), Card(value=7, suit="h")]
-        for x in itertools.permutations(
+        list(x + y)
+        for x, y in itertools.product(
+        itertools.permutations(
             [
-                Card(value=8, suit="s"),
-                Card(value=8, suit="h"),
-                Card(value=8, suit="d"),
+                Card(value=3, suit="c"),
+                Card(value=3, suit="s"),
+                Card(value=3, suit="d"),
             ]
-        )
+        ),
+        itertools.permutations(
+            [
+                Card(value=8, suit="d"),
+                Card(value=9, suit="s"),
+            ]
+        ))
     ]
 
 
@@ -244,15 +257,16 @@ def test_two_pair():
     bh = BestHand(pocket, board)
     assert bh.rank == "two pair"
     assert bh.best_hand in [
-        x + y + [Card(value=9, suit="s")]
-        for x, y in itertools.product(
-            itertools.permutations(
-                [Card(value=8, suit="s"), Card(value=8, suit="h")]
-            ),
-            itertools.permutations(
-                [Card(value=7, suit="d"), Card(value=7, suit="h")]
-            ),
-        )
+        list(x)
+        for x in itertools.permutations(
+                [
+                    Card(value=8, suit="s"),
+                    Card(value=8, suit="h"),
+                    Card(value=7, suit="d"),
+                    Card(value=7, suit="h"),
+                    Card(value=9, suit="s"),
+                ]
+            )
     ]
 
 
@@ -272,7 +286,7 @@ def test_pair():
     bh = BestHand(pocket, board)
     assert bh.rank == "pair"
     assert bh.best_hand in [
-        x
+       list(x)
         + [
             Card(value=7, suit="d"),
             Card(value=6, suit="h"),

@@ -62,15 +62,19 @@ class BestHand:
         """
         self._check_pairings()
         if self.rank == "four of a kind" or self.rank == "full house":
-            self.pocket_pos = [
-                self.best_hand.index(card) for card in self.__pocket
-            ]
+            # jpalafou - I commented these out because of they break in the case where
+            # self.best_hand includes only one of the pocket cards, NOT both
+
+
+            # self.pocket_pos = [
+            #     self.best_hand.index(card) for card in self.__pocket
+            # ]
             return None
         else:
             self._check_straight_or_flush()
-            self.pocket_pos = [
-                self.best_hand.index(card) for card in self.__pocket
-            ]
+            # self.pocket_pos = [
+            #     self.best_hand.index(card) for card in self.__pocket
+            # ]
             return None
 
     def _check_straight_or_flush(self):
