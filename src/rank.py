@@ -174,7 +174,7 @@ class BestHand:
             bh.extend(filter_by_value(trips[0], sorted_hand))
         elif len(pairs) >= 2:
             self._update_rank("two pair")
-            for p in pairs:
+            for p in pairs[:2]:
                 bh.extend(filter_by_value(p, sorted_hand))
         elif len(pairs) == 1:
             self._update_rank("pair")

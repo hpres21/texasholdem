@@ -186,7 +186,7 @@ def test_three_of_a_kind():
 
     bh = BestHand(pocket, board)
     assert bh.rank == "three of a kind"
-    assert bh.best_hand in [
+    assert bh.best_hand == [
         Card(value=3, suit="c"),
         Card(value=3, suit="s"),
         Card(value=3, suit="d"),
