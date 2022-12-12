@@ -213,8 +213,8 @@ def test_two_pair():
     assert bh.best_hand == [
         Card(value=8, suit="s"),
         Card(value=8, suit="h"),
-        Card(value=7, suit="s"),
         Card(value=7, suit="d"),
+        Card(value=7, suit="s"),
         Card(value=9, suit="s"),
     ]
 
