@@ -134,7 +134,7 @@ class BestHand:
             self.best_hand = temp_bh
         return None
 
-    def check_pairings(self) -> None:
+    def _check_pairings(self) -> None:
         """"
         This method identifies four of a kinds, full houses, three of a kinds, 
         two pair, pairs, and high card hands. It then updates self.handrank
