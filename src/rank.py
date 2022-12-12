@@ -1,6 +1,6 @@
 import functools
 import itertools
-from src.deck import Card
+from deck import Card
 
 def filter_by_value(value: int, l: list[Card]) -> list:
     """"

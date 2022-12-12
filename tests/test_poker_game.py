@@ -12,7 +12,7 @@ def test_player_hand():
     cards and the remaining deck should be empty
     """
     deck = Deck()
-    p1 = Player(100)
+    p1 = Player(stack = 100)
     for _ in range(26):
         p1.draw_hand(deck)
         assert all(isinstance(c, Card) for c in p1.hand)
@@ -32,14 +32,15 @@ def test_adding_and_removing_players(unused_parameter):
     table = PokerTable()
     table.reset()
     for i in range(players_added):
-        table.add_player(Player(i))
+        table.add_player(Player(name = "p" + str(i)))
     for i in range(players_removed):
-        table.remove_player(Player(i))
+        table.remove_player(Player(name = "p" + str(i)))
     assert len(table.players) == players_added - players_removed
 
 
-@pytest.mark.parametrize("unused_parameter", list(range(n_tests)))
-def test_drawing_table_cards(unused_parameter):
+# @pytest.mark.parametrize("unused_parameter", list(range(n_tests)))
+# def test_drawing_table_cards(unused_parameter):
+def test_drawing_table_cards():
     """
     flopping and drawing twice should result in a list of 5 cards
     """
@@ -48,5 +49,4 @@ def test_drawing_table_cards(unused_parameter):
     table.flop()
     table.draw_card()
     table.draw_card()
-    assert all(isinstance(c, Card) for c in table.board)
     assert len(table.board) == 5

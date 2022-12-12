@@ -62,14 +62,10 @@ class Deck:
         suits = ("h", "c", "s", "d")
         cards = tuple(itertools.product(values, suits))
         self.deck = [Card(v, s) for v, s in cards]
+        random.shuffle(self.deck)
 
     def shuffle(self):
         random.shuffle(self.deck)
 
     def draw(self):
         return self.deck.pop()
-
-    def reset(self, shuffle: bool = False):
-        self.deck = [Card(v, s) for v, s in self.cards]
-        if shuffle:
-            self.shuffle()
