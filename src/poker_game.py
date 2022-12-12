@@ -12,6 +12,7 @@ class Player:
     hand = []
     bet_this_round: int = 0
     current_decision: Union[int, str, None] = None
+    status: str = None # 'little blind', 'big blind', 'dealer'
 
     def __repr__(self) -> str:
         return str(
@@ -76,7 +77,8 @@ class PokerTable:
     max_num_players: int = 6
     big_blind: int = 2
     pot_size: int = 0
-    players = []
+    all_players = []
+    current_players = []
     board = []
     current_bet: int = 0
     deck = Deck()
@@ -85,16 +87,28 @@ class PokerTable:
         """
         Not final form of function just for testing right now
         """
-        return str((self.pot_size, self.current_bet, self.board, self.players))
+        return str((self.pot_size, self.current_bet, self.board, self.current_players))
 
     def add_player(self, player: Player) -> None:
-        if len(self.players) <= self.max_num_players:
-            self.players.append(player)
+        if len(self.all_players) <= self.max_num_players:
+            self.all_players.append(player)
+            self.current_players.append(player)
         else:
             print("Too many players. Wait for one to leave before you buy in.")
 
-    def remove_player(self, player: Player) -> None:
-        self.players.pop(self.players.index(player))
+    def sit_out_player(self, player: Player) -> None:
+        """
+        player has lost the current round, they will sit out
+        """
+        self.current_players.pop(self.current_players.index(player))
+        print(f"Player {player} removed from game with ${player.stack}")
+
+    def banish_player(self, player: Player) -> None:
+        """
+        player has lost all their chips. they can no longer play
+        should only be called after sit_out_player
+        """
+        self.all_players.pop(self.all_players.index(player))
         print(f"Player {player} removed from game with ${player.stack}")
 
     def flop(self) -> None:
@@ -112,16 +126,14 @@ class PokerTable:
         All actions involve a bet >= 0, or a fold.
         """
         if player.current_decision == "FOLD":
-            print("folding")
+            print(f"{player.name} folds")
             self.players.pop(self.players.index(player))
         elif type(player.current_decision) == int:
             self.pot_size += player.current_decision
             player.stack -= player.current_decision
-            self.current_bet = (
-                player.bet_this_round
-                if player.bet_this_round > self.current_bet
-                else self.current_bet
-            )
+            if player.bet_this_round > self.current_bet:
+                self.current_bet = player.bet_this_round
+            print(f"{player.name} bets {player.current_decision} chips")
 
     def reset(self) -> None:
         self.pot_size = 0
