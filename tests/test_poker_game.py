@@ -1,7 +1,7 @@
 import pytest
 import random
-from src.deck import Card, Deck
-from src.poker_game import Player, PokerTable
+from deck import Card, Deck
+from poker_game import Player, PokerTable
 
 n_tests = 10
 
@@ -50,3 +50,43 @@ def test_drawing_table_cards(unused_parameter):
     table.draw_card()
     assert all(isinstance(c, Card) for c in table.board)
     assert len(table.board) == 5
+
+
+def test_player_check():
+    """
+    Tests whether the the player's decision to check is valid.
+    """
+    test_player = Player("test", stack = 1000)
+
+    with pytest.mock.patch.object(__builtins__, 'input', lambda: 'CHECK'):
+        test_player.decision(0)
+        assert test_player.current_decision == 0
+        
+        with pytest.mock.patch.object(__builtins__, 'print', lambda: return None):
+            test_player.decision(10)
+            assert test_player.decision(10) == "You cannot check"
+
+def test_player_bet():
+    """
+    Tests whether the player's decision to bet is valid.
+    """
+    test_player = Player("test", stack = 1000)
+    with pytest.mock.patch.object(__builtins__, 'input', lambda: 50):
+        assert test_player.decision(0) == 50
+        assert test_player.current_bet == 50
+        assert test_player.decision(50) == 50
+        assert test_player.decision(60) == "Please bet a valid amount"
+    with pytest.mock.patch.object(__builtins__, 'input', lambda: 1500):
+        assert test_player.decision(60) == "Please bet a valid amount"
+
+def test_player_call():
+    """
+    Tests whether the player's decision to call is valid.
+    """
+    test_player = Player("test", stack = 1000)
+    with pytest.mock.patch.object(__builtins__, 'input', lambda: "CALL"):
+        test_player.decision(15)
+
+        assert test_player.current_bet 15`
+        assert test_player.decision(50) == 50
+        assert test_player.decision(60) == "Please bet a valid amount"

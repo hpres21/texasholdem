@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from src.deck import Deck, Card
-from src.rank import BestHand
+from deck import Deck, Card
+from rank import BestHand
 from typing import Union
 
 
@@ -32,7 +32,7 @@ class Player:
         )
         try:
             action = int(action)
-            if action >= 2 * current_bet and action <= self.stack:
+            if action >= current_bet and action <= self.stack:
                 self.current_decision = action - self.bet_this_round
                 self.bet_this_round += self.current_decision
             else:
@@ -40,17 +40,17 @@ class Player:
                 self.decision(current_bet)
         except ValueError:
             if action.upper() == "CALL":
-                if current_bet.current_bet != self.bet_this_round:
-                    self.current_decision = current_bet.current_bet
+                if current_bet != self.bet_this_round:
+                    self.current_decision = current_bet
                     self.bet_this_round += self.current_decision
                 else:
-                    print("You cannot Call")
+                    print("You cannot call")
                     self.decision(current_bet)
             elif action.upper() == "CHECK":
-                if current_bet.current_bet == self.bet_this_round:
+                if current_bet == self.bet_this_round:
                     self.current_decision = 0
                 else:
-                    print("You cannot Check")
+                    print("You cannot check")
                     self.decision(current_bet)
             elif action.upper() == "FOLD":
                 self.current_decision = "FOLD"
