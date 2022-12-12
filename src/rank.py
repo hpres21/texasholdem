@@ -2,6 +2,11 @@ import functools
 import itertools
 from src.deck import Card
 
+def filter_by_value(value: int, l: list[Card]) -> list:
+    """"
+    Helper function to find cards in a list specified card value. 
+    """
+    return list(filter(lambda x: x.value == value, l))
 
 @functools.total_ordering
 class BestHand:
@@ -129,11 +134,11 @@ class BestHand:
             self.best_hand = temp_bh
         return None
 
-    def _check_pairings(self) -> None:
-        """
-        This method identifies four of a kinds, full houses, three of a kinds,
-        two pair, pairs, and high card hands. It then updates self.rank
-        and constructs a list of the five best cards which is stored in
+    def check_pairings(self) -> None:
+        """"
+        This method identifies four of a kinds, full houses, three of a kinds, 
+        two pair, pairs, and high card hands. It then updates self.handrank
+        and constructs a list of the five best cards which is stored in 
         self.best_hand.
         """
         bh = []
@@ -141,41 +146,40 @@ class BestHand:
         trips = []
         quads = []
 
-        sorted_hand = sorted(self.__pocket + self.__board, reverse=True)
+        sorted_hand = sorted(self.pocket + self.board, reverse=True)
+        hand_values = map(lambda x: x.value, sorted_hand)
 
-        for num, group in itertools.groupby(
-            sorted_hand, lambda card: card.value
-        ):
+        for hand, group in itertools.groupby(hand_values):
             count = sum(1 for _ in group)
             if count == 2:
-                pairs.append((num, list(group)))
+                pairs.append(hand)
             elif count == 3:
-                trips.append((num, list(group)))
+                trips.append(hand)
             elif count == 4:
-                quads.append((num, list(group)))
+                quads.append(hand)
 
-        pairs = sorted(pairs, key=lambda x: x[0], reverse=True)
-        trips = sorted(trips, key=lambda x: x[0], reverse=True)
         if len(quads) > 0:
             self._update_rank("four of a kind")
-            bh.extend(quads[0][1])
+            bh.extend(filter_by_value(quads[0], sorted_hand))
         elif len(trips) > 0 and len(trips + pairs) >= 2:
             self._update_rank("full house")
-            bh.extend(trips[0])
+            bh.extend(filter_by_value(trips[0], sorted_hand))
             if len(trips) == 2:
-                bh.extend(trips[1])
+                bh.extend(filter_by_value(trips[1], sorted_hand))
                 bh = bh[:-1]
             else:
-                bh.extend(pairs[0])
+                bh.extend(filter_by_value(pairs[0], sorted_hand))          
         elif len(trips) == 1:
             self._update_rank("three of a kind")
-            bh.extend(trips[0])
+            bh.extend(filter_by_value(trips[0], sorted_hand))
         elif len(pairs) >= 2:
             self._update_rank("two pair")
-            bh.extend(pairs[0] + pairs[1])
+            for p in pairs:
+                bh.extend(filter_by_value(p, sorted_hand))
         elif len(pairs) == 1:
             self._update_rank("pair")
-            bh.extend(pairs[0])
+            bh.extend(filter_by_value(pairs[0], sorted_hand))
+            
         else:
             self._update_rank("high card")
 
@@ -183,9 +187,9 @@ class BestHand:
         while len(bh) < 5:
             if sorted_hand[i] not in bh:
                 bh.append(sorted_hand[i])
-            i += 1
+            i+=1
+        
         self.best_hand = bh
-        return None
 
     @staticmethod
     def _is_valid_operand(other):
