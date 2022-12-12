@@ -146,7 +146,7 @@ class BestHand:
         trips = []
         quads = []
 
-        sorted_hand = sorted(self.pocket + self.board, reverse=True)
+        sorted_hand = sorted(self.__pocket + self.__board, reverse=True)
         hand_values = map(lambda x: x.value, sorted_hand)
 
         for hand, group in itertools.groupby(hand_values):
