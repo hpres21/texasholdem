@@ -87,6 +87,6 @@ def test_player_call():
     with pytest.mock.patch.object(__builtins__, 'input', lambda: "CALL"):
         test_player.decision(15)
 
-        assert test_player.current_bet 15`
+        assert test_player.current_bet = 15`
         assert test_player.decision(50) == 50
         assert test_player.decision(60) == "Please bet a valid amount"
