@@ -1,3 +1,4 @@
+import random
 from dataclasses import dataclass
 from deck import Deck, Card
 from rank import BestHand
@@ -6,14 +7,15 @@ from typing import Union
 
 @dataclass
 class Player:
-    stack: int
+    name: str = random.sample(["Henry", "Jiachen", "Jonathan"], 1)[0]
+    stack: int = 0
     hand = []
     bet_this_round: int = 0
     current_decision: Union[int, str, None] = None
 
     def __repr__(self) -> str:
         return str(
-            (self.stack, self.bet_this_round, self.current_decision, self.hand)
+            (self.name, self.stack, self.bet_this_round, self.current_decision, self.hand)
         )
 
     def draw_hand(self, deck: Deck) -> None:
