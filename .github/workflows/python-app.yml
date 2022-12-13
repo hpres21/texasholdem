@@ -32,8 +32,8 @@ jobs:
           pre-commit install
       - name: Pre-commit run
         run: |
-          pre-commit
-
+          pre-commit run -a
+          
   build:
 
     runs-on: ubuntu-latest
