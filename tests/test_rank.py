@@ -1,4 +1,3 @@
-import itertools
 from src.deck import Card
 from src.rank import BestHand
 
