@@ -12,7 +12,7 @@ class Player:
     hand = []
     bet_this_round: int = 0
     current_decision: Union[int, str, None] = None
-    status: Union[str, None] = None # 'little blind', 'big blind', 'dealer' 'highest bettor'
+    status: Union[str, None] = None  # 'little blind', 'big blind', 'dealer' 'highest bettor'
 
     def __repr__(self) -> str:
         return str(
@@ -27,20 +27,18 @@ class Player:
 
     def best_hand(self, board: list[Card]) -> BestHand:
         return BestHand(self.hand, board)
-    
+
     def reset_action(self):
         self.status = None
         self.current_decision = None
         self.bet_this_round = 0
-    
-    def bet(self, action: int)-> None:
+
+    def bet(self, action: int) -> None:
         """
         Sets current_decision and bet_this_round attributs on self
         """
         self.current_decision = action
         self.bet_this_round += self.current_decision
-        
-
 
     def decision(self, current_bet: int, pot: int) -> None:
         """
@@ -59,14 +57,14 @@ class Player:
         )
         try:
             action = int(action)
-            if action >= current_bet and action <= self.stack:
+            if current_bet <= action <= self.stack:
                 self.bet(action - self.bet_this_round)
             else:
                 print("Please bet a valid amount")
                 self.decision(current_bet, pot)
         except ValueError:
             if action.upper() == "CALL":
-                if current_bet > self.bet_this_round and self.stack>=current_bet:
+                if self.bet_this_round < current_bet <= self.stack:
                     self.bet(current_bet - self.bet_this_round)
                 elif current_bet == 0:
                     print("You cannot call")
@@ -76,7 +74,7 @@ class Player:
             elif action.upper() == "CHECK":
                 if current_bet == self.bet_this_round:
                     self.current_decision = 0
-                    self.status == None
+                    self.status = None
                 else:
                     print("You cannot check")
                     self.decision(current_bet, pot)
@@ -87,9 +85,6 @@ class Player:
             else:
                 print("Invalid decision.")
                 self.decision(current_bet, pot)
-
-
-
 
 
 @dataclass
@@ -153,7 +148,6 @@ class PokerTable:
         player.status = "highest bettor"
         print(player.status)
 
-
     def process_decision(self, player: Player) -> None:
         """
         Update table based on player's decision.
@@ -169,12 +163,11 @@ class PokerTable:
                 self.current_bet = player.bet_this_round
                 self.set_highest_bettor(player)
             print(f"{player.name} bets ${player.current_decision}")
-    
+
     def end_action(self) -> None:
         self.current_bet = 0
         for player in self.active_players:
             player.reset_action()
-        
 
     def reset(self) -> None:
         self.pot_size = 0
@@ -192,4 +185,3 @@ class PokerTable:
     def payout(self, player: Player) -> None:
         player.stack += self.pot_size
         # self.end_round()
-    
