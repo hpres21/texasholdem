@@ -102,8 +102,8 @@ class PokerTable:
     max_num_players: int = 6
     big_blind: int = 2
     pot_size: int = 0
-    all_players = []
-    current_players = []
+    players = []
+    active_players = []
     board = []
     current_bet: int = 0
     deck = Deck()
@@ -112,12 +112,12 @@ class PokerTable:
         """
         Not final form of function just for testing right now
         """
-        return str((self.pot_size, self.current_bet, self.board, self.current_players))
+        return str((self.pot_size, self.current_bet, self.board, self.active_players))
 
     def add_player(self, player: Player) -> None:
-        if len(self.all_players) <= self.max_num_players:
-            self.all_players.append(player)
-            self.current_players.append(player)
+        if len(self.players) <= self.max_num_players:
+            self.players.append(player)
+            self.active_players.append(player)
         else:
             print("Too many players. Wait for one to leave before you buy in.")
 
@@ -125,16 +125,16 @@ class PokerTable:
         """
         The Player has lost the current round, they will sit out.
         """
-        self.current_players.pop(self.current_players.index(player))
+        self.active_players.pop(self.active_players.index(player))
         player.reset_action()
         print(f"Player {player} removed from game with ${player.stack}")
 
-    def banish_player(self, player: Player) -> None:
+    def remove_player(self, player: Player) -> None:
         """
         player has lost all their chips. they can no longer play
         should only be called after sit_out_player
         """
-        self.all_players.pop(self.all_players.index(player))
+        self.players.pop(self.players.index(player))
         print(f"Player {player} removed from game with ${player.stack}")
 
     def flop(self) -> None:
@@ -147,7 +147,7 @@ class PokerTable:
         self.board.append(self.deck.draw())
 
     def set_highest_bettor(self, player: Player) -> None:
-        for p in self.current_players:
+        for p in self.active_players:
             if p.status != "big blind":
                 p.status = None
         player.status = "highest bettor"
@@ -172,22 +172,22 @@ class PokerTable:
     
     def end_action(self) -> None:
         self.current_bet = 0
-        for player in self.current_players:
+        for player in self.active_players:
             player.reset_action()
         
 
     def reset(self) -> None:
         self.pot_size = 0
-        self.current_players = []
+        self.active_players = []
         self.board = []
         self.current_bet = 0
         self.deck = Deck()
 
     def determine_winner(self) -> Player:
-        game_hands = [p.best_hand(self.board) for p in self.current_players]
+        game_hands = [p.best_hand(self.board) for p in self.active_players]
         besthand = max(game_hands)
         i = game_hands.index(besthand)
-        return self.current_players[i]
+        return self.active_players[i]
 
     def payout(self, player: Player) -> None:
         player.stack += self.pot_size

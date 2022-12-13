@@ -19,12 +19,12 @@ def run_player_decisions(table: PokerTable) -> int:
      """
     small_blind = table.big_blind // 2
 
-    player = table.current_players[0]
+    player = table.active_players[0]
 
-    num_active_players = len(table.current_players)
+    num_active_players = len(table.active_players)
     while num_active_players > 1 and player.status != "highest bettor":
-        player_index = table.current_players.index(player)
-        next_player = table.current_players[(player_index + 1) % num_active_players]
+        player_index = table.active_players.index(player)
+        next_player = table.active_players[(player_index + 1) % num_active_players]
 
         if player.status == 'little blind':  # pre flop forced bet
             player.bet(small_blind)
@@ -39,7 +39,7 @@ def run_player_decisions(table: PokerTable) -> int:
             table.process_decision(player)
         print(player.status)
         player = next_player
-        num_active_players = len(table.current_players)
+        num_active_players = len(table.active_players)
     return num_active_players
 
 
@@ -50,16 +50,16 @@ def end_round(table: pokertable, winner: Player) -> None:
 
 def run_round(pokertable: PokerTable):
     # preflop
-    pokertable.current_players[0].status = 'little blind'
-    pokertable.current_players[1].status = 'big blind'
+    pokertable.active_players[0].status = 'little blind'
+    pokertable.active_players[1].status = 'big blind'
 
-    for player in pokertable.current_players:
+    for player in pokertable.active_players:
         player.draw_hand(pokertable.deck)
 
     num_remaining_players = run_player_decisions(pokertable)
 
     if num_remaining_players == 1:
-        winner = pokertable.current_players[0]
+        winner = pokertable.active_players[0]
         end_round(pokertable, winner)
         pokertable.reset()
         print(winner)
@@ -73,7 +73,7 @@ def run_round(pokertable: PokerTable):
     num_remaining_players = run_player_decisions(pokertable)
 
     if num_remaining_players == 1:
-        winner = pokertable.current_players[0]
+        winner = pokertable.active_players[0]
         end_round(pokertable, winner)
         print(winner)
         return
@@ -86,7 +86,7 @@ def run_round(pokertable: PokerTable):
     num_remaining_players = run_player_decisions(pokertable)
 
     if num_remaining_players == 1:
-        winner = pokertable.current_players[0]
+        winner = pokertable.active_players[0]
         end_round(pokertable, winner)
         print(winner)
         return
@@ -99,7 +99,7 @@ def run_round(pokertable: PokerTable):
     num_remaining_players = run_player_decisions(pokertable)
 
     if num_remaining_players == 1:
-        winner = pokertable.current_players[0]
+        winner = pokertable.active_players[0]
         end_round(pokertable, winner)
         return
     else:
