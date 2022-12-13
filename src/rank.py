@@ -4,8 +4,8 @@ from deck import Card
 
 
 def filter_by_value(value: int, cards: list[Card]) -> list:
-    """"
-    Helper function to find cards in a list specified card value. 
+    """ "
+    Helper function to find cards in a list specified card value.
     """
     return list(filter(lambda x: x.value == value, cards))
 
@@ -51,7 +51,7 @@ class BestHand:
 
     def _update_rank(self, new_rank: str) -> bool:
         assert (
-                new_rank in self._ranking
+            new_rank in self._ranking
         ), f"{new_rank} is not in ranking dictionary."
         if not self.rank:
             self.rank = new_rank
@@ -70,13 +70,17 @@ class BestHand:
         self._check_pairings()
         if self.rank == "four of a kind" or self.rank == "full house":
             self.pocket_pos = [
-                self.best_hand.index(card) for card in self.__pocket if card in self.best_hand
+                self.best_hand.index(card)
+                for card in self.__pocket
+                if card in self.best_hand
             ]
             return None
         else:
             self._check_straight_or_flush()
             self.pocket_pos = [
-                self.best_hand.index(card) for card in self.__pocket if card in self.best_hand
+                self.best_hand.index(card)
+                for card in self.__pocket
+                if card in self.best_hand
             ]
             return None
 
@@ -102,8 +106,8 @@ class BestHand:
                 sorted_hand = [sorted_hand[1:], sorted_hand[0]]
                 is_straight = True
             elif (
-                    len(set(sorted_value)) == 5
-                    and (sorted_value[0] - sorted_value[4]) == 4
+                len(set(sorted_value)) == 5
+                and (sorted_value[0] - sorted_value[4]) == 4
             ):
                 is_straight = True
 
@@ -185,7 +189,7 @@ class BestHand:
             if sorted_hand[i] not in bh:
                 bh.append(sorted_hand[i])
             i += 1
-        
+
         self.best_hand = bh
 
     @staticmethod

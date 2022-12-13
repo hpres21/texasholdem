@@ -15,7 +15,7 @@ print(pokertable)
 
 def run_player_decisions(table: PokerTable) -> int:
     """
-    This function asks each player for their decision 
+    This function asks each player for their decision
     :during the current round of action
     """
     small_blind = table.big_blind // 2
