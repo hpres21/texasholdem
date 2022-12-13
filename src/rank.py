@@ -2,11 +2,13 @@ import functools
 import itertools
 from deck import Card
 
-def filter_by_value(value: int, l: list[Card]) -> list:
+
+def filter_by_value(value: int, cards: list[Card]) -> list:
     """"
     Helper function to find cards in a list specified card value. 
     """
-    return list(filter(lambda x: x.value == value, l))
+    return list(filter(lambda x: x.value == value, cards))
+
 
 @functools.total_ordering
 class BestHand:
@@ -49,7 +51,7 @@ class BestHand:
 
     def _update_rank(self, new_rank: str) -> bool:
         assert (
-            new_rank in self._ranking
+                new_rank in self._ranking
         ), f"{new_rank} is not in ranking dictionary."
         if not self.rank:
             self.rank = new_rank
@@ -67,19 +69,15 @@ class BestHand:
         """
         self._check_pairings()
         if self.rank == "four of a kind" or self.rank == "full house":
-            # jpalafou - I commented these out because of they break in the case where
-            # self.best_hand includes only one of the pocket cards, NOT both
-
-
-            # self.pocket_pos = [
-            #     self.best_hand.index(card) for card in self.__pocket
-            # ]
+            self.pocket_pos = [
+                self.best_hand.index(card) for card in self.__pocket if card in self.best_hand
+            ]
             return None
         else:
             self._check_straight_or_flush()
-            # self.pocket_pos = [
-            #     self.best_hand.index(card) for card in self.__pocket
-            # ]
+            self.pocket_pos = [
+                self.best_hand.index(card) for card in self.__pocket if card in self.best_hand
+            ]
             return None
 
     def _check_straight_or_flush(self):
@@ -104,8 +102,8 @@ class BestHand:
                 sorted_hand = [sorted_hand[1:], sorted_hand[0]]
                 is_straight = True
             elif (
-                len(set(sorted_value)) == 5
-                and (sorted_value[0] - sorted_value[4]) == 4
+                    len(set(sorted_value)) == 5
+                    and (sorted_value[0] - sorted_value[4]) == 4
             ):
                 is_straight = True
 
@@ -168,7 +166,7 @@ class BestHand:
                 bh.extend(filter_by_value(trips[1], sorted_hand))
                 bh = bh[:-1]
             else:
-                bh.extend(filter_by_value(pairs[0], sorted_hand))          
+                bh.extend(filter_by_value(pairs[0], sorted_hand))
         elif len(trips) == 1:
             self._update_rank("three of a kind")
             bh.extend(filter_by_value(trips[0], sorted_hand))
@@ -179,7 +177,7 @@ class BestHand:
         elif len(pairs) == 1:
             self._update_rank("pair")
             bh.extend(filter_by_value(pairs[0], sorted_hand))
-            
+
         else:
             self._update_rank("high card")
 
@@ -187,8 +185,8 @@ class BestHand:
         while len(bh) < 5:
             if sorted_hand[i] not in bh:
                 bh.append(sorted_hand[i])
-            i+=1
-        
+            i += 1
+
         self.best_hand = bh
 
     @staticmethod
