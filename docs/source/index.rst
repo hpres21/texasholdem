@@ -6,11 +6,19 @@
 Welcome to TexasHoldEm's documentation!
 =======================================
 
+**TexasHoldEm** is a Python library for playing the game Texas Hold'em.
+
+Check out the :doc:`usage` section for further information, including how to
+:ref:`install <installation>` the project.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
 
+.. note::
+
+   This project is developed as the final project for course APC 524.
 
 Indices and tables
 ==================
@@ -18,3 +26,11 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+Contents
+--------
+
+.. toctree::
+
+   usage
+   api
