@@ -12,11 +12,11 @@ class Player:
     hand = []
     bet_this_round: int = 0
     current_decision: Union[int, str, None] = None
-    status: str = None # 'little blind', 'big blind', 'dealer'
+    status: Union[str, None] = None # 'little blind', 'big blind', 'dealer' 'highest bettor'
 
     def __repr__(self) -> str:
         return str(
-            (self.name, self.stack, self.bet_this_round, self.current_decision, self.hand)
+            (self.name, self.stack, self.hand)
         )
 
     def draw_hand(self, deck: Deck) -> None:
@@ -25,46 +25,71 @@ class Player:
     def clear_hand(self) -> None:
         self.hand = []
 
-    def decision(self, current_bet: int) -> None:
+    def best_hand(self, board: list[Card]) -> BestHand:
+        return BestHand(self.hand, board)
+    
+    def reset_action(self):
+        self.status = None
+        self.current_decision = None
+        self.bet_this_round = 0
+    
+    def bet(self, action: int)-> None:
+        """
+        Sets current_decision and bet_this_round attributs on self
+        """
+        self.current_decision = action
+        self.bet_this_round += self.current_decision
+        
+
+
+    def decision(self, current_bet: int, pot: int) -> None:
         """
         Decision method prompts the user to choose an action for their turn.
         """
+        # Skip player who is all-in
+        if self.stack == 0:
+            self.current_decision = 0
+            return
+
         action = input(
-            f"You have {self.stack}. The current bet is {current_bet}. "
+            f"{self.name} has ({self.hand},  ${self.stack}). "
+            f"The current pot is ${pot}. The current bet is ${current_bet}. "
+            f"You have put in ${self.bet_this_round} already. "
             "Please make a decision: "
         )
         try:
             action = int(action)
             if action >= current_bet and action <= self.stack:
-                self.current_decision = action - self.bet_this_round
-                self.bet_this_round += self.current_decision
+                self.bet(action - self.bet_this_round)
             else:
                 print("Please bet a valid amount")
-                self.decision(current_bet)
+                self.decision(current_bet, pot)
         except ValueError:
             if action.upper() == "CALL":
-                if current_bet != self.bet_this_round:
-                    self.current_decision = current_bet
-                    self.bet_this_round += self.current_decision
-                else:
+                if current_bet > self.bet_this_round and self.stack>=current_bet:
+                    self.bet(current_bet - self.bet_this_round)
+                elif current_bet == 0:
                     print("You cannot call")
-                    self.decision(current_bet)
+                    self.decision(current_bet, pot)
+                else:
+                    self.bet(self.stack)
             elif action.upper() == "CHECK":
                 if current_bet == self.bet_this_round:
                     self.current_decision = 0
+                    self.status == None
                 else:
                     print("You cannot check")
-                    self.decision(current_bet)
+                    self.decision(current_bet, pot)
+            elif action.upper() == "ALL IN":
+                self.bet(self.stack)
             elif action.upper() == "FOLD":
                 self.current_decision = "FOLD"
-                self.bet_this_round = 0
-                self.current_decision = None
             else:
                 print("Invalid decision.")
-                self.decision(current_bet)
+                self.decision(current_bet, pot)
 
-    def best_hand(self, board: list[Card]) -> BestHand:
-        return BestHand(self.hand, board)
+
+
 
 
 @dataclass
@@ -98,9 +123,10 @@ class PokerTable:
 
     def sit_out_player(self, player: Player) -> None:
         """
-        player has lost the current round, they will sit out
+        The Player has lost the current round, they will sit out.
         """
         self.current_players.pop(self.current_players.index(player))
+        player.reset_action()
         print(f"Player {player} removed from game with ${player.stack}")
 
     def banish_player(self, player: Player) -> None:
@@ -120,6 +146,14 @@ class PokerTable:
         assert len(self.board) <= 5
         self.board.append(self.deck.draw())
 
+    def set_highest_bettor(self, player: Player) -> None:
+        for p in self.current_players:
+            if p.status != "big blind":
+                p.status = None
+        player.status = "highest bettor"
+        print(player.status)
+
+
     def process_decision(self, player: Player) -> None:
         """
         Update table based on player's decision.
@@ -127,27 +161,35 @@ class PokerTable:
         """
         if player.current_decision == "FOLD":
             print(f"{player.name} folds")
-            self.players.pop(self.players.index(player))
+            self.sit_out_player(player)
         elif type(player.current_decision) == int:
             self.pot_size += player.current_decision
             player.stack -= player.current_decision
             if player.bet_this_round > self.current_bet:
                 self.current_bet = player.bet_this_round
-            print(f"{player.name} bets {player.current_decision} chips")
+                self.set_highest_bettor(player)
+            print(f"{player.name} bets ${player.current_decision}")
+    
+    def end_action(self) -> None:
+        self.current_bet = 0
+        for player in self.current_players:
+            player.reset_action()
+        
 
     def reset(self) -> None:
         self.pot_size = 0
-        self.players = []
+        self.current_players = []
         self.board = []
         self.current_bet = 0
         self.deck = Deck()
 
     def determine_winner(self) -> Player:
-        game_hands = [p.best_hand(self.board) for p in self.players]
+        game_hands = [p.best_hand(self.board) for p in self.current_players]
         besthand = max(game_hands)
         i = game_hands.index(besthand)
-        return self.players[i]
+        return self.current_players[i]
 
     def payout(self, player: Player) -> None:
         player.stack += self.pot_size
         # self.end_round()
+    
