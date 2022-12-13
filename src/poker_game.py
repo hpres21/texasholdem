@@ -12,12 +12,12 @@ class Player:
     hand = []
     bet_this_round: int = 0
     current_decision: Union[int, str, None] = None
-    status: Union[str, None] = None  # 'little blind', 'big blind', 'dealer' 'highest bettor'
+    status: Union[
+        str, None
+    ] = None  # 'little blind', 'big blind', 'dealer' 'highest bettor'
 
     def __repr__(self) -> str:
-        return str(
-            (self.name, self.stack, self.hand)
-        )
+        return str((self.name, self.stack, self.hand))
 
     def draw_hand(self, deck: Deck) -> None:
         self.hand = [deck.draw() for _ in range(2)]
@@ -107,7 +107,9 @@ class PokerTable:
         """
         Not final form of function just for testing right now
         """
-        return str((self.pot_size, self.current_bet, self.board, self.active_players))
+        return str(
+            (self.pot_size, self.current_bet, self.board, self.active_players)
+        )
 
     def add_player(self, player: Player) -> None:
         if len(self.players) <= self.max_num_players:

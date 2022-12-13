@@ -15,8 +15,9 @@ print(pokertable)
 
 def run_player_decisions(table: PokerTable) -> int:
     """
-     This function asks each player for their decision for the current round of action
-     """
+    This function asks each player for their decision 
+    :during the current round of action
+    """
     small_blind = table.big_blind // 2
 
     player = table.active_players[0]
@@ -24,12 +25,14 @@ def run_player_decisions(table: PokerTable) -> int:
     num_active_players = len(table.active_players)
     while num_active_players > 1 and player.status != "highest bettor":
         player_index = table.active_players.index(player)
-        next_player = table.active_players[(player_index + 1) % num_active_players]
+        next_player = table.active_players[
+            (player_index + 1) % num_active_players
+        ]
 
-        if player.status == 'little blind':  # pre flop forced bet
+        if player.status == "little blind":  # pre flop forced bet
             player.bet(small_blind)
             table.process_decision(player)
-        elif player.status == 'big blind':  # pre flop forced bet
+        elif player.status == "big blind":  # pre flop forced bet
             player.bet(table.big_blind)
             table.process_decision(player)
         elif player_index == 0 and table.current_bet == 0:
@@ -50,8 +53,8 @@ def end_round(table: pokertable, winner: Player) -> None:
 
 def run_round(pokertable: PokerTable):
     # preflop
-    pokertable.active_players[0].status = 'little blind'
-    pokertable.active_players[1].status = 'big blind'
+    pokertable.active_players[0].status = "little blind"
+    pokertable.active_players[1].status = "big blind"
 
     for player in pokertable.active_players:
         player.draw_hand(pokertable.deck)

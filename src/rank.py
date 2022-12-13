@@ -2,11 +2,13 @@ import functools
 import itertools
 from deck import Card
 
-def filter_by_value(value: int, l: list[Card]) -> list:
-    """"
-    Helper function to find cards in a list specified card value. 
+
+def filter_by_value(value: int, lst: list[Card]) -> list:
+    """ "
+    Helper function to find cards in a list specified card value.
     """
-    return list(filter(lambda x: x.value == value, l))
+    return list(filter(lambda x: x.value == value, lst))
+
 
 @functools.total_ordering
 class BestHand:
@@ -67,9 +69,9 @@ class BestHand:
         """
         self._check_pairings()
         if self.rank == "four of a kind" or self.rank == "full house":
-            # jpalafou - I commented these out because of they break in the case where
-            # self.best_hand includes only one of the pocket cards, NOT both
-
+            # jpalafou - I commented these out because of they break 
+            # in the case where self.best_hand includes only one of 
+            # the pocket cards, NOT both
 
             # self.pocket_pos = [
             #     self.best_hand.index(card) for card in self.__pocket
@@ -135,10 +137,10 @@ class BestHand:
         return None
 
     def _check_pairings(self) -> None:
-        """"
-        This method identifies four of a kinds, full houses, three of a kinds, 
+        """ "
+        This method identifies four of a kinds, full houses, three of a kinds,
         two pair, pairs, and high card hands. It then updates self.handrank
-        and constructs a list of the five best cards which is stored in 
+        and constructs a list of the five best cards which is stored in
         self.best_hand.
         """
         bh = []
@@ -168,7 +170,7 @@ class BestHand:
                 bh.extend(filter_by_value(trips[1], sorted_hand))
                 bh = bh[:-1]
             else:
-                bh.extend(filter_by_value(pairs[0], sorted_hand))          
+                bh.extend(filter_by_value(pairs[0], sorted_hand))
         elif len(trips) == 1:
             self._update_rank("three of a kind")
             bh.extend(filter_by_value(trips[0], sorted_hand))
@@ -179,7 +181,7 @@ class BestHand:
         elif len(pairs) == 1:
             self._update_rank("pair")
             bh.extend(filter_by_value(pairs[0], sorted_hand))
-            
+
         else:
             self._update_rank("high card")
 
@@ -187,8 +189,8 @@ class BestHand:
         while len(bh) < 5:
             if sorted_hand[i] not in bh:
                 bh.append(sorted_hand[i])
-            i+=1
-        
+            i += 1
+
         self.best_hand = bh
 
     @staticmethod
