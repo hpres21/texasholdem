@@ -173,6 +173,7 @@ class PokerTable:
 
     def reset(self) -> None:
         self.pot_size = 0
+        self.players = []
         self.active_players = []
         self.board = []
         self.current_bet = 0

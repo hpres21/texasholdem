@@ -34,6 +34,7 @@ def test_adding_and_removing_players(unused_parameter):
     for i in range(players_added):
         table.add_player(Player(name="p" + str(i)))
     for i in range(players_removed):
+        table.sit_out_player(Player(name="p" + str(i)))
         table.remove_player(Player(name="p" + str(i)))
     assert len(table.players) == players_added - players_removed
 
