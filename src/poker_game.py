@@ -1,8 +1,8 @@
 from __future__ import annotations
 import random
 from dataclasses import dataclass
-from src.deck import Deck, Card
-from src.rank import BestHand
+from deck import Deck, Card
+from rank import BestHand
 
 
 @dataclass

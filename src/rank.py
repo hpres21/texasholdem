@@ -1,7 +1,7 @@
 from __future__ import annotations
 import functools
 import itertools
-from src.deck import Card
+from deck import Card
 
 
 def filter_by_value(value: int, cards: list[Card]) -> list:

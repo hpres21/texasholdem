@@ -1,16 +1,4 @@
-# import sys
-# from src.deck import Card, Deck
-# from src.rank import BestHand
-from src.poker_game import Player, PokerTable
-
-# initialize game
-stack_size = 1000
-n_players = 3
-# n_players = int(input("Enter number of players: "))
-pokertable = PokerTable(max_num_players=n_players)
-for i in range(n_players):  # add players to table6
-    pokertable.add_player(Player(name="p" + str(i), stack=stack_size))
-print(pokertable)
+from poker_game import Player, PokerTable
 
 
 def run_player_decisions(table: PokerTable) -> int:
@@ -40,18 +28,20 @@ def run_player_decisions(table: PokerTable) -> int:
         else:
             player.decision(table.current_bet, table.pot_size)
             table.process_decision(player)
-        print(player.status)
         player = next_player
         num_active_players = len(table.active_players)
     return num_active_players
 
 
-def end_round(table: pokertable, winner: Player) -> None:
-    pokertable.payout(winner)
-    pokertable.reset()
+def end_round(table: PokerTable, winner: Player) -> None:
+    table.payout(winner)
+    table.reset()
 
 
 def run_round(pokertable: PokerTable):
+    """
+    This function holds the logic to play a single round of poker
+    """
     # preflop
     pokertable.active_players[0].status = "little blind"
     pokertable.active_players[1].status = "big blind"
@@ -114,4 +104,11 @@ def run_round(pokertable: PokerTable):
 
 
 if __name__ == "main":
+    # initialize game
+    stack_size = 1000
+    n_players = int(input("Enter number of players: "))
+    pokertable = PokerTable(max_num_players=n_players)
+    for i in range(n_players):  # add players to table6
+        pokertable.add_player(Player(name="p" + str(i), stack=stack_size))
+    print(pokertable)
     run_round(pokertable)
