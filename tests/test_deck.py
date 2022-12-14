@@ -1,4 +1,4 @@
-from src.deck import Deck
+from deck import Deck
 
 
 def test_empty_deck():

@@ -1,5 +1,5 @@
 import random
-from src.poker_game import Player
+from poker_game import Player
 
 
 class NpcRandom(Player):

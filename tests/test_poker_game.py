@@ -2,8 +2,8 @@
 import pytest
 import random
 from unittest.mock import patch
-from src.deck import Card, Deck
-from src.poker_game import Player, PokerTable
+from deck import Card, Deck
+from poker_game import Player, PokerTable
 
 n_tests = 10
 
