@@ -58,10 +58,7 @@ class Deck:
     """
 
     def __init__(self):
-        values = (2 + i for i in range(13))
-        suits = ("h", "c", "s", "d")
-        cards = tuple(itertools.product(values, suits))
-        self.deck = [Card(v, s) for v, s in cards]
+        self.deck = Deck.deck()
         random.shuffle(self.deck)
 
     def shuffle(self):
@@ -69,3 +66,11 @@ class Deck:
 
     def draw(self):
         return self.deck.pop()
+
+    @staticmethod
+    def deck():
+        values = (2 + i for i in range(13))
+        suits = ("h", "c", "s", "d")
+        cards = tuple(itertools.product(values, suits))
+        deck = [Card(v, s) for v, s in cards]
+        return deck
