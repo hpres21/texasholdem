@@ -33,7 +33,7 @@ jobs:
       - name: Pre-commit run
         run: |
           pre-commit run -a
-          
+
   build:
 
     runs-on: ubuntu-latest
