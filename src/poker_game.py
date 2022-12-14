@@ -52,34 +52,46 @@ class Player:
         possible_actions = {"ALL IN", "FOLD"}
         if current_bet > self.bet_this_round:
             possible_actions.add("CALL")
+            if self.stack >= current_bet * 2:
+                action = input(
+                    f"The board is now {*board,}."
+                    f"{self.name}'s hand is {self.hand}, with ${self.stack} chips. "
+                    f"The current pot is ${pot}. The current bet is ${current_bet}. "
+                    f"You have put in ${self.bet_this_round} already. "
+                    f"Please make a decision between: {*possible_actions,}"
+                    f", or enter your raise size from ${current_bet * 2 - self.bet_this_round} to ${self.stack} "
+                )
+            else:
+                action = input(
+                    f"The board is now {*board,}."
+                    f"{self.name}'s hand is {self.hand}, with ${self.stack} chips. "
+                    f"The current pot is ${pot}. The current bet is ${current_bet}. "
+                    f"You have put in ${self.bet_this_round} already. "
+                    f"Please make a decision between: {*possible_actions,}."
+                )
         elif current_bet == self.bet_this_round:
             possible_actions.add("CHECK")
-
-        action = input(
-            f"The board is now {*board, }."
-            f"{self.name}'s hand is {self.hand}, with ${self.stack} chips. "
-            f"The current pot is ${pot}. The current bet is ${current_bet}. "
-            f"You have put in ${self.bet_this_round} already. "
-            f"Please make a decision between: {*possible_actions, }"
-            f", or enter your bet size from ${current_bet} to ${self.stack} "
-        )
+            action = input(
+                f"The board is now {*board,}."
+                f"{self.name}'s hand is {self.hand}, with ${self.stack} chips. "
+                f"The current pot is ${pot}. The current bet is ${current_bet}. "
+                f"You have put in ${self.bet_this_round} already. "
+                f"Please make a decision in: {*possible_actions,}"
+                f", or enter your bet size from ${current_bet + 1} to ${self.stack} "
+            )
 
         try:
             action = int(action)
-            if current_bet <= action <= self.stack:
+            if current_bet * 2 <= action <= self.stack or action == current_bet:
                 self.bet(action - self.bet_this_round)
             else:
                 print("Please bet a valid amount")
                 self.decision(current_bet, pot)
         except ValueError:
-            if action.upper() == "CALL":
-                if self.bet_this_round < current_bet <= self.stack:
-                    self.bet(current_bet - self.bet_this_round)
-                elif current_bet == 0:
-                    print("You cannot call")
-                    self.decision(current_bet, pot)
-                else:
-                    self.bet(self.stack)
+            if action.upper() == "ALL IN":
+                self.bet(self.stack)
+            elif action.upper() == "FOLD":
+                self.current_decision = "FOLD"
             elif action.upper() == "CHECK":
                 if current_bet == self.bet_this_round:
                     self.current_decision = 0
@@ -87,10 +99,18 @@ class Player:
                 else:
                     print("You cannot check")
                     self.decision(current_bet, pot)
-            elif action.upper() == "ALL IN":
-                self.bet(self.stack)
-            elif action.upper() == "FOLD":
-                self.current_decision = "FOLD"
+            elif action.upper() == "CALL":
+                if self.bet_this_round < current_bet <= self.stack:
+                    self.bet(current_bet - self.bet_this_round)
+                elif current_bet == self.bet_this_round:
+                    print("You cannot call")
+                    self.decision(current_bet, pot)
+                elif current_bet > self.stack:
+                    print("Your stack is less than the current bet, doing ALL IN instead.")
+                    self.bet(self.stack)
+                # for testing, to be removed
+                else:
+                    assert False, "something is wrong"
             else:
                 print("Invalid decision.")
                 self.decision(current_bet, pot)
