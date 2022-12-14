@@ -171,7 +171,7 @@ class PokerTable:
         for player in self.active_players:
             player.reset_action()
 
-    def clear_players(self) ->None:
+    def clear_players(self) -> None:
         self.players = []
 
     def reset(self) -> None:

@@ -1,3 +1,4 @@
+# flake8: noqa
 import pytest
 import random
 from unittest.mock import patch
@@ -52,7 +53,8 @@ def test_drawing_table_cards(unused_parameter):
     table.draw_card()
     assert len(table.board) == 5
 
-@patch('builtins.input', lambda _: 'CHECK')
+
+@patch("builtins.input", lambda _: "CHECK")
 def test_player_check():
     """
     Tests whether the the player's decision to check is valid.
@@ -61,7 +63,8 @@ def test_player_check():
     test_player.decision(0, 0)
     assert test_player.current_decision == 0
 
-@patch('builtins.input', lambda _: 50)
+
+@patch("builtins.input", lambda _: 50)
 def test_player_bet():
     """
     Tests whether the player's decision to bet is valid.
@@ -70,7 +73,8 @@ def test_player_bet():
     test_player.decision(0, 0)
     assert test_player.current_decision == 50
 
-@patch('builtins.input', lambda _: 'CALL')
+
+@patch("builtins.input", lambda _: "CALL")
 def test_player_call():
     """
     Tests whether the player's decision to call is valid.
@@ -79,8 +83,9 @@ def test_player_call():
     test_player.decision(15, 15)
     assert test_player.current_decision == 15
 
-@patch('builtins.input', lambda _: 'FOLD')
-def test_player_call():
+
+@patch("builtins.input", lambda _: "FOLD")
+def test_player_fold():
     """
     Tests whether the player can fold
     """
@@ -88,8 +93,9 @@ def test_player_call():
     test_player.decision(15, 15)
     assert test_player.current_decision == "FOLD"
 
-@patch('builtins.input', lambda _: 'ALL IN')
-def test_player_call():
+
+@patch("builtins.input", lambda _: "ALL IN")
+def test_player_all_in():
     """
     Tests whether the player can fold
     """
@@ -97,12 +103,13 @@ def test_player_call():
     test_player.decision(15, 15)
     assert test_player.current_decision == test_player.stack
 
+
 def test_player_reset_action():
     """
-    Method to test a reset action of a 
+    Method to test a reset action of a
     """
     deck = Deck()
-    test_player = Player(stack = 1000)
+    test_player = Player(stack=1000)
     test_player.current_decision = random.randint(1, 1000)
     test_player.status = "highest bettor"
     test_player.bet_this_round = random.randint(1, 1000)
@@ -118,7 +125,7 @@ def test_table_payout():
     """
     money = random.randint(1, 1000)
     test_table = PokerTable()
-    test_player = Player(stack = 0)
+    test_player = Player(stack=0)
     test_table.pot_size = money
     test_table.payout(test_player)
     assert test_table.pot_size == 0
