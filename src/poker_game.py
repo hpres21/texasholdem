@@ -171,6 +171,9 @@ class PokerTable:
         for player in self.active_players:
             player.reset_action()
 
+    def clear_players(self) ->None:
+        self.players = []
+
     def reset(self) -> None:
         self.pot_size = 0
         self.active_players = []
@@ -186,4 +189,4 @@ class PokerTable:
 
     def payout(self, player: Player) -> None:
         player.stack += self.pot_size
-        # self.end_round()
+        self.pot_size = 0
