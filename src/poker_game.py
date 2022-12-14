@@ -40,7 +40,7 @@ class Player:
         self.current_decision = action
         self.bet_this_round += self.current_decision
 
-    def decision(self, current_bet: int, pot: int) -> None:
+    def decision(self, current_bet: int, pot: int, board: list[Card]) -> None:
         """
         Decision method prompts the user to choose an action for their turn.
         """
@@ -49,12 +49,21 @@ class Player:
             self.current_decision = 0
             return
 
+        possible_actions = {"ALL IN", "FOLD"}
+        if current_bet > self.bet_this_round:
+            possible_actions.add("CALL")
+        elif current_bet == self.bet_this_round:
+            possible_actions.add("CHECK")
+
         action = input(
-            f"{self.name} has ({self.hand},  ${self.stack}). "
+            f"The board is now {*board, }."
+            f"{self.name}'s hand is {self.hand}, with ${self.stack} chips. "
             f"The current pot is ${pot}. The current bet is ${current_bet}. "
             f"You have put in ${self.bet_this_round} already. "
-            "Please make a decision: "
+            f"Please make a decision between: {*possible_actions, }"
+            f", or enter your bet size from ${current_bet} to ${self.stack} "
         )
+
         try:
             action = int(action)
             if current_bet <= action <= self.stack:
