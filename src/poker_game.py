@@ -1,8 +1,8 @@
+from __future__ import annotations
 import random
 from dataclasses import dataclass
-from deck import Deck, Card
-from rank import BestHand
-from typing import Union
+from src.deck import Deck, Card
+from src.rank import BestHand
 
 
 @dataclass
@@ -11,10 +11,10 @@ class Player:
     stack: int = 0
     hand = []
     bet_this_round: int = 0
-    current_decision: Union[int, str, None] = None
-    status: Union[
-        str, None
-    ] = None  # 'little blind', 'big blind', 'dealer' 'highest bettor'
+    current_decision: int | str | None = None
+    status: (
+        str | None
+    ) = None  # 'little blind', 'big blind', 'dealer' 'highest bettor'
 
     def __repr__(self) -> str:
         return str((self.name, self.stack, self.hand))

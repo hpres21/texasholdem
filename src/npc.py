@@ -10,15 +10,19 @@ class NpcRandom(Player):
 
     def decision(self, current_bet: int, pot: int) -> None:
         """
-        Decision method prompts the npc to choose an action for their turn. The npc will decide randomly between all
-        choices.
+        Decision method prompts the npc to choose an action for their turn.
+        The npc will decide randomly between all choices.
         """
         # Skip player who is all-in
         if self.stack == 0:
             self.current_decision = 0
             return
 
-        possible_action = {"ALL IN", "FOLD", random.randint(current_bet, self.stack)}
+        possible_action = {
+            "ALL IN",
+            "FOLD",
+            random.randint(current_bet, self.stack),
+        }
         if current_bet > 0:
             possible_action.add("CALL")
         if current_bet == self.bet_this_round:
@@ -54,15 +58,19 @@ class NpcStrategy1(Player):
 
     def decision(self, current_bet: int, pot: int) -> None:
         """
-        Decision method prompts the npc to choose an action for their turn. The npc will decide based on the
-        probability of winning.
+        Decision method prompts the npc to choose an action for their turn.
+        The npc will decide based on theprobability of winning.
         """
         # Skip player who is all-in
         if self.stack == 0:
             self.current_decision = 0
             return
 
-        possible_action = {"ALL IN", "FOLD", random.randint(current_bet, self.stack)}
+        possible_action = {
+            "ALL IN",
+            "FOLD",
+            random.randint(current_bet, self.stack),
+        }
         if current_bet > 0:
             possible_action.add("CALL")
         if current_bet == self.bet_this_round:
