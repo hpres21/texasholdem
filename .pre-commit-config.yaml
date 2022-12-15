@@ -17,6 +17,7 @@ repos:
     rev: "22.10.0"
     hooks:
       - id: black
+        exclude: utils/cowboy.txt, utils/title.txt
 
   - repo: https://github.com/pycqa/flake8
     rev: "5.0.4"

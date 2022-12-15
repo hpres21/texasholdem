@@ -40,7 +40,13 @@ class Player:
         self.current_decision = action
         self.bet_this_round += self.current_decision
 
-    def decision(self, table_cards: list, current_bet: int, pot: int, asking_again_message: str = None) -> None:
+    def decision(
+        self,
+        table_cards: list,
+        current_bet: int,
+        pot: int,
+        asking_again_message: str = None,
+    ) -> None:
         """
         Decision method prompts the user to choose an action for their turn.
         """
@@ -52,11 +58,11 @@ class Player:
         if asking_again_message is None:
             action = input(
                 f"Awaiting {self.name}'s decision...\n"
-                "\tcards on table:\t" + ' '.join(map(str, table_cards)) + "\n"
+                "\tcards on table:\t" + " ".join(map(str, table_cards)) + "\n"
                 f"\tpot:\t\t${pot}\n"
                 f"\tcurrent bet:\t${current_bet}\n"
                 "\n"
-                "\thand:\t\t" + ' '.join(map(str, self.hand)) + "\n"
+                "\thand:\t\t" + " ".join(map(str, self.hand)) + "\n"
                 f"\tstack:\t\t${self.stack}\n"
                 f"\talready bet:\t${self.bet_this_round}\n"
                 "Please make a decision: "
@@ -68,15 +74,33 @@ class Player:
             if current_bet <= action <= self.stack:
                 self.bet(action - self.bet_this_round)
             elif action < current_bet:
-                self.decision(table_cards, current_bet, pot, asking_again_message = "Your bet ain't high enough, cowboy. Try again: ")
+                self.decision(
+                    table_cards,
+                    current_bet,
+                    pot,
+                    asking_again_message="Your bet ain't high enough, cowbo"
+                    "y. Try again: ",
+                )
             elif action - self.bet_this_round > self.stack:
-                self.decision(table_cards, current_bet, pot, asking_again_message = "Not enough chips in the stack for that one. Please bet a valid amount: ")
+                self.decision(
+                    table_cards,
+                    current_bet,
+                    pot,
+                    asking_again_message="Not enough chips in the stack for"
+                    " that one. Please bet a valid amount: ",
+                )
         except ValueError:
             if action.upper() == "CALL":
                 if self.bet_this_round < current_bet <= self.stack:
                     self.bet(current_bet - self.bet_this_round)
                 elif current_bet == 0:
-                    self.decision(table_cards, current_bet, pot, asking_again_message = "You cannot call. Try something else: ")
+                    self.decision(
+                        table_cards,
+                        current_bet,
+                        pot,
+                        asking_again_message="You cannot call. Try something "
+                        "else: ",
+                    )
                 else:
                     self.bet(self.stack)
             elif action.upper() == "CHECK":
@@ -84,13 +108,25 @@ class Player:
                     self.current_decision = 0
                     self.status = None
                 else:
-                    self.decision(table_cards, current_bet, pot, asking_again_message = "You cannot check. Try something else: ")
+                    self.decision(
+                        table_cards,
+                        current_bet,
+                        pot,
+                        asking_again_message="You cannot check. Try something"
+                        " else: ",
+                    )
             elif action.upper() == "ALL IN":
                 self.bet(self.stack)
             elif action.upper() == "FOLD":
                 self.current_decision = "FOLD"
             else:
-                self.decision(table_cards, current_bet, pot, asking_again_message = "Invalid decision. Try something else: ")
+                self.decision(
+                    table_cards,
+                    current_bet,
+                    pot,
+                    asking_again_message="Invalid decision. Try something els"
+                    "e: ",
+                )
 
 
 @dataclass
@@ -130,7 +166,6 @@ class PokerTable:
         """
         self.active_players.pop(self.active_players.index(player))
         player.reset_action()
-        print(f"Player {player} removed from game with ${player.stack}")
 
     def remove_player(self, player: Player) -> None:
         """
@@ -138,7 +173,6 @@ class PokerTable:
         should only be called after sit_out_player
         """
         self.players.pop(self.players.index(player))
-        print(f"Player {player} removed from game with ${player.stack}")
 
     def flop(self) -> None:
         assert len(self.board) == 0
@@ -161,7 +195,7 @@ class PokerTable:
         All actions involve a bet >= 0, or a fold.
         """
         if player.current_decision == "FOLD":
-            print(f"{player.name} folds")
+            print(f"\n{player.name} folds with a stack of ${player.stack}\n")
             self.sit_out_player(player)
         elif type(player.current_decision) == int:
             self.pot_size += player.current_decision
