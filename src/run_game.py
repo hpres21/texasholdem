@@ -25,11 +25,11 @@ def run_player_decisions(table: PokerTable) -> int:
             player.bet(table.big_blind)
             table.process_decision(player)
         elif player_index == 0 and table.current_bet == 0:
-            player.decision(table.current_bet, table.pot_size)
+            player.decision(table.board, table.current_bet, table.pot_size)
             table.process_decision(player)
             player.status = "highest bettor"
         else:
-            player.decision(table.current_bet, table.pot_size)
+            player.decision(table.board, table.current_bet, table.pot_size)
             table.process_decision(player)
         player = next_player
         num_active_players = len(table.active_players)
@@ -114,7 +114,6 @@ def initialize_game(dict_of_player_types = None, stack_size = 1000):
     otherwise, dict_of_player_types should be of the form
     {player_name: player_type}
     """
-    global pokertable
     if dict_of_player_types is None:
         print_title()
         input("Press Enter to continue...")
@@ -162,9 +161,9 @@ def initialize_game(dict_of_player_types = None, stack_size = 1000):
                 pokertable.add_player(NpcRandom(name = name, stack = stack_size))
             elif player_type == '1':
                 pokertable.add_player(NpcStrategy1(name = name, stack = stack_size))
+    return pokertable
 
 
-initialize_game()
-# initialize_game({'p0':'h', 'p1':'h', 'p2':'h'})
-print(pokertable)
-# run_round(pokertable)
+# pokertable = initialize_game() # run this for the fully printed intro
+pokertable = initialize_game({'p0':'h', 'p1':'h', 'p2':'h'})
+run_round(pokertable)
