@@ -109,9 +109,10 @@ def run_round(pokertable: PokerTable):
 def initialize_game(dict_of_player_types = None, stack_size = 1000):
     """
     set up an instance of PokerTable in order to run a game.
-    if dict_of_player_types is None, assume a human player is setting up the game
-    and print a cute UI to help them add players to the table. otherwise, 
-    dict_of_player_types should be of the form {player_name: player_type}
+    if dict_of_player_types is None, assume a human player is setting up the
+    game and print a cute UI to help them add players to the table.
+    otherwise, dict_of_player_types should be of the form
+    {player_name: player_type}
     """
     global pokertable
     if dict_of_player_types is None:
