@@ -8,8 +8,5 @@ def print_title():
     print_file('util/title.txt')
     print()
 
-def print_subtitle():
-    print_file('util/subtitle.txt')
-
 def print_cowboy():
     print_file('util/cowboy.txt')

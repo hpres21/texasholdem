@@ -1,6 +1,6 @@
 from poker_game import Player, PokerTable
 from npc import NpcRandom, NpcStrategy1
-from printing import *
+from printing import print_title, print_cowboy
 
 def run_player_decisions(table: PokerTable) -> int:
     """
@@ -111,6 +111,7 @@ input("Press Enter to continue...")
 print_cowboy()
 print("Welcome to the table, partner.")
 n_players = int(input("Enter the number of players: "))
+print()
 pokertable = PokerTable(max_num_players=n_players)
 print("Enter type for each player:")
 print("\t'h'\thuman")
@@ -119,7 +120,7 @@ print("\t'1'\tstrategic npc 1")
 for i in range(n_players):  # add players to table6
     player_type = input(f"p{i} type: ")
     if player_type == 'h':
-        human_name = input(f"p{i} name: ")
+        human_name = input(f"Enter a name for p{i}: ")
         if human_name == "":
             human_name = f"p{i}"
         pokertable.add_player(Player(name = human_name, stack = stack_size))
