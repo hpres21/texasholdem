@@ -107,13 +107,19 @@ def run_round(pokertable: PokerTable):
 
 
 def initialize_game(dict_of_player_types = None, stack_size = 1000):
+    """
+    set up an instance of PokerTable in order to run a game.
+    if dict_of_player_types is None, assume a human player is setting up the game
+    and print a cute UI to help them add players to the table. otherwise, 
+    dict_of_player_types should be of the form {player_name: player_type}
+    """
     global pokertable
-    if dict_of_player_types == None:
+    if dict_of_player_types is None:
         print_title()
         input("Press Enter to continue...")
         print_cowboy()
         print("Welcome to the table, partner.")
-        if stack_size == None:
+        if stack_size is None:
             stack_size = int(input("Enter the stack size: "))
             print()
         n_players = int(input("Enter the number of players: "))
@@ -130,7 +136,10 @@ def initialize_game(dict_of_player_types = None, stack_size = 1000):
                     if player_type not in ['h', 'r', '1']:
                         raise ValueError
                 except ValueError:
-                    print("Woah there! I don't reckon that's a valid player type. Try again...")
+                    print(
+                        "Woah there! I don't reckon that's a valid player typ"
+                        "e. Try again..."
+                        )
                     continue
                 else:
                     break
@@ -154,7 +163,7 @@ def initialize_game(dict_of_player_types = None, stack_size = 1000):
                 pokertable.add_player(NpcStrategy1(name = name, stack = stack_size))
 
 
-# initialize_game()
-initialize_game({'p0':'h', 'p1':'h', 'p2':'h'})
+initialize_game()
+# initialize_game({'p0':'h', 'p1':'h', 'p2':'h'})
 print(pokertable)
 # run_round(pokertable)
