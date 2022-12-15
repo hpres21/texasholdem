@@ -61,7 +61,7 @@ def test_player_check():
     Tests whether the the player's decision to check is valid.
     """
     test_player = Player("test", stack=1000)
-    test_player.decision(0, 0)
+    test_player.decision([], 0, 0)
     assert test_player.current_decision == 0
 
 
@@ -71,7 +71,7 @@ def test_player_bet():
     Tests whether the player's decision to bet is valid.
     """
     test_player = Player("test", stack=1000)
-    test_player.decision(0, 0)
+    test_player.decision([], 0, 0)
     assert test_player.current_decision == 50
 
 
@@ -81,7 +81,7 @@ def test_player_call():
     Tests whether the player's decision to call is valid.
     """
     test_player = Player("test", stack=1000)
-    test_player.decision(15, 15)
+    test_player.decision([], 15, 15)
     assert test_player.current_decision == 15
 
 
@@ -91,7 +91,7 @@ def test_player_fold():
     Tests whether the player can fold
     """
     test_player = Player("test", stack=1000)
-    test_player.decision(15, 15)
+    test_player.decision([], 15, 15)
     assert test_player.current_decision == "FOLD"
 
 
@@ -101,7 +101,7 @@ def test_player_all_in():
     Tests whether the player can fold
     """
     test_player = Player("test", stack=1000)
-    test_player.decision(15, 15)
+    test_player.decision([], 15, 15)
     assert test_player.current_decision == test_player.stack
 
 
