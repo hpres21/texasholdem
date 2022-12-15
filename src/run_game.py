@@ -1,5 +1,6 @@
 from poker_game import Player, PokerTable
-
+from npc import NpcRandom, NpcStrategy1
+from printing import *
 
 def run_player_decisions(table: PokerTable) -> int:
     """
@@ -105,9 +106,26 @@ def run_round(pokertable: PokerTable):
 
 # initialize game
 stack_size = 1000
-n_players = int(input("Enter number of players: "))
+print_title()
+input("Press Enter to continue...")
+print_cowboy()
+print("Welcome to the table, partner.")
+n_players = int(input("Enter the number of players: "))
 pokertable = PokerTable(max_num_players=n_players)
+print("Enter type for each player:")
+print("\t'h'\thuman")
+print("\t'r'\trandom NPC")
+print("\t'1'\tstrategic npc 1")
 for i in range(n_players):  # add players to table6
-    pokertable.add_player(Player(name="p" + str(i), stack=stack_size))
+    player_type = input(f"p{i} type: ")
+    if player_type == 'h':
+        human_name = input(f"p{i} name: ")
+        if human_name == "":
+            human_name = f"p{i}"
+        pokertable.add_player(Player(name = human_name, stack = stack_size))
+    elif player_type == 'r':
+        pokertable.add_player(NpcRandom(name = f"p{i}", stack = stack_size))
+    elif player_type == '1':
+        pokertable.add_player(NpcStrategy1(name = f"p{i}", stack = stack_size))
 print(pokertable)
 run_round(pokertable)
