@@ -103,12 +103,10 @@ def run_round(pokertable: PokerTable):
         return
 
 
-if __name__ == "main":
-    # initialize game
-    stack_size = 1000
-    n_players = int(input("Enter number of players: "))
-    pokertable = PokerTable(max_num_players=n_players)
-    for i in range(n_players):  # add players to table6
-        pokertable.add_player(Player(name="p" + str(i), stack=stack_size))
-    print(pokertable)
-    run_round(pokertable)
+stack_size = 1000
+n_players = int(input("Enter number of players: "))
+pokertable = PokerTable(max_num_players=n_players)
+for i in range(n_players):  # add players to table6
+    pokertable.add_player(Player(name="p" + str(i), stack=stack_size))
+print(pokertable)
+run_round(pokertable)

@@ -167,6 +167,9 @@ class PokerTable:
             print(f"{player.name} bets ${player.current_decision}")
 
     def end_action(self) -> None:
+        """
+        Ends round of betting
+        """
         self.current_bet = 0
         for player in self.active_players:
             player.reset_action()
@@ -175,6 +178,9 @@ class PokerTable:
         self.players = []
 
     def reset(self) -> None:
+        """
+        Resets table status
+        """
         self.pot_size = 0
         self.players = []
         self.active_players = []
@@ -183,11 +189,17 @@ class PokerTable:
         self.deck = Deck()
 
     def determine_winner(self) -> Player:
+        """
+        Calculate the winning active player
+        """
         game_hands = [p.best_hand(self.board) for p in self.active_players]
         besthand = max(game_hands)
         i = game_hands.index(besthand)
         return self.active_players[i]
 
     def payout(self, player: Player) -> None:
+        """
+        Pay winning player
+        """
         player.stack += self.pot_size
         self.pot_size = 0
