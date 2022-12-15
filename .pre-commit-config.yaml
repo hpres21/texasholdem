@@ -9,25 +9,28 @@ repos:
       - id: check-yaml
       - id: debug-statements
       - id: end-of-file-fixer
+        exclude: ^docs/, utils/ascii/
       - id: mixed-line-ending
       - id: requirements-txt-fixer
       - id: trailing-whitespace
+        exclude: utils/ascii/
 
   - repo: https://github.com/psf/black
     rev: "22.10.0"
     hooks:
       - id: black
-        exclude: utils/cowboy.txt, utils/title.txt
+        exclude: utils/ascii/
 
   - repo: https://github.com/pycqa/flake8
     rev: "5.0.4"
     hooks:
       - id: flake8
         additional_dependencies: [flake8-bugbear]
-        exclude: ^docs/
+        exclude: ^docs/, utils/ascii/
 
   - repo: https://github.com/asottile/pyupgrade
     rev: "v3.2.2"
     hooks:
       - id: pyupgrade
         args: ["--py37-plus"]
+        exclude: utils/ascii/
