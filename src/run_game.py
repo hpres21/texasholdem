@@ -25,6 +25,8 @@ def run_player_decisions(table: PokerTable) -> int:
             player.bet(table.big_blind)
             table.process_decision(player)
         elif player_index == 0 and table.current_bet == 0:
+            player.decision(table.current_bet, table.pot_size)
+            table.process_decision(player)
             player.status = "highest bettor"
         else:
             player.decision(table.current_bet, table.pot_size)
