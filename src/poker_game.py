@@ -190,11 +190,13 @@ class PokerTable:
 
     def determine_winner(self) -> Player:
         """
-        Finds winners an returns a list of winners. 
+        Finds winners an returns a list of winners.
         """
         game_hands = [p.best_hand(self.board) for p in self.active_players]
         besthands = [hand for hand in game_hands if hand == max(game_hands)]
-        winners = [self.active_players[game_hands.index(hand)] for hand in besthands]
+        winners = [
+            self.active_players[game_hands.index(hand)] for hand in besthands
+        ]
         return winners
 
     def payout(self, players: list[Player]) -> None:
@@ -203,5 +205,5 @@ class PokerTable:
         """
         num_winners = len(players)
         for player in players:
-            player.stack += self.pot_size//num_winners
+            player.stack += self.pot_size // num_winners
         self.pot_size = 0

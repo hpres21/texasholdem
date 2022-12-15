@@ -2,6 +2,7 @@ from poker_game import Player, PokerTable
 from npc import NpcRandom, NpcStrategy1
 from printing import print_title, print_cowboy
 
+
 def run_player_decisions(table: PokerTable) -> int:
     """
     This function asks each player for their decision
@@ -106,14 +107,14 @@ def run_round(pokertable: PokerTable):
         return
 
 
-def initialize_game(dict_of_player_types = None, stack_size = 1000):
+def initialize_game(dict_of_player_types=None, stack_size=1000):
     global pokertable
-    if dict_of_player_types == None:
+    if dict_of_player_types is None:
         print_title()
         input("Press Enter to continue...")
         print_cowboy()
         print("Welcome to the table, partner.")
-        if stack_size == None:
+        if stack_size is None:
             stack_size = int(input("Enter the stack size: "))
             print()
         n_players = int(input("Enter the number of players: "))
@@ -127,34 +128,45 @@ def initialize_game(dict_of_player_types = None, stack_size = 1000):
             while True:
                 try:
                     player_type = input(f"p{i} type: ")
-                    if player_type not in ['h', 'r', '1']:
+                    if player_type not in ["h", "r", "1"]:
                         raise ValueError
                 except ValueError:
-                    print("Woah there! I don't reckon that's a valid player type. Try again...")
+                    print(
+                        "Woah there! I don't reckon that's "
+                        "a valid player type. Try again..."
+                    )
                     continue
                 else:
                     break
-            if player_type == 'h':
+            if player_type == "h":
                 human_name = input(f"Enter a name for p{i}: ")
                 if human_name == "":
                     human_name = f"p{i}"
-                pokertable.add_player(Player(name = human_name, stack = stack_size))
-            elif player_type == 'r':
-                pokertable.add_player(NpcRandom(name = f"p{i}", stack = stack_size))
-            elif player_type == '1':
-                pokertable.add_player(NpcStrategy1(name = f"p{i}", stack = stack_size))
+                pokertable.add_player(
+                    Player(name=human_name, stack=stack_size)
+                )
+            elif player_type == "r":
+                pokertable.add_player(
+                    NpcRandom(name=f"p{i}", stack=stack_size)
+                )
+            elif player_type == "1":
+                pokertable.add_player(
+                    NpcStrategy1(name=f"p{i}", stack=stack_size)
+                )
     else:
-        pokertable = PokerTable(max_num_players = len(dict_of_player_types))
+        pokertable = PokerTable(max_num_players=len(dict_of_player_types))
         for name, player_type in dict_of_player_types.items():
-            if player_type == 'h':
-                pokertable.add_player(Player(name = name, stack = stack_size))
-            elif player_type == 'r':
-                pokertable.add_player(NpcRandom(name = name, stack = stack_size))
-            elif player_type == '1':
-                pokertable.add_player(NpcStrategy1(name = name, stack = stack_size))
+            if player_type == "h":
+                pokertable.add_player(Player(name=name, stack=stack_size))
+            elif player_type == "r":
+                pokertable.add_player(NpcRandom(name=name, stack=stack_size))
+            elif player_type == "1":
+                pokertable.add_player(
+                    NpcStrategy1(name=name, stack=stack_size)
+                )
 
 
 # initialize_game()
-initialize_game({'p0':'h', 'p1':'h', 'p2':'h'})
+initialize_game({"p0": "h", "p1": "h", "p2": "h"})
 print(pokertable)
 run_round(pokertable)
