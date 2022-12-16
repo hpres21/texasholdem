@@ -1,6 +1,6 @@
 import numpy as np
-from poker_game import Player, PokerTable
-from npc import NpcRandom, NpcStrategy1
+from poker_game import PokerTable
+from player import Player, NpcRandom, NpcStrategy1
 from printing import print_title, print_cowboy, print_cards
 
 
