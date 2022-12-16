@@ -1,7 +1,7 @@
 import pytest
 import random
-from src.deck import Card, Deck
-from src.player import Player, NpcRandom, NpcStrategy1, NpcStrategy2
+from deck import Card, Deck
+from player import Player, NpcRandom, NpcStrategy1, NpcStrategy2
 
 n_tests = 10
 
@@ -35,7 +35,7 @@ def test_npc_random(unused_parameter):
     p1.bet_this_round = random.randint(0, stack)
     # call the decision method
     current_bet = random.randint(0, 100)
-    p1.decision(table_cards=[], current_bet=current_bet, pot=0)
+    p1.decision(current_bet=current_bet, pot=0, table_cards=[])
     if isinstance(p1.current_decision, int):
         assert p1.current_decision in list(
             range(
@@ -81,8 +81,9 @@ def test_npc_strategy1_decision(unused_parameter):
     current_bet = random.randint(0, 100)
     pot = random.randint(0, 200)
     p1.decision(
+        current_bet=current_bet,
+        pot=pot,
         table_cards=[deck.draw() for _ in range(5)],
-        current_bet=current_bet, pot=pot
     )
     if isinstance(p1.current_decision, int):
         assert p1.current_decision in list(
@@ -129,7 +130,9 @@ def test_npc_strategy2_decision(unused_parameter):
     current_bet = random.randint(0, 100)
     pot = random.randint(0, 200)
     p1.decision(
-        current_bet=current_bet, pot=pot, table_cards=[deck.draw() for _ in range(5)]
+        current_bet=current_bet,
+        pot=pot,
+        table_cards=[deck.draw() for _ in range(5)],
     )
     if isinstance(p1.current_decision, int):
         assert p1.current_decision in list(

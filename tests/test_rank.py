@@ -1,5 +1,5 @@
-from src.deck import Card
-from src.rank import BestHand
+from deck import Card
+from rank import BestHand
 
 
 def test_royal_flush():
