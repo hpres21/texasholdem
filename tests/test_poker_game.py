@@ -7,6 +7,7 @@ from poker_game import Player, PokerTable
 
 n_tests = 10
 
+
 @pytest.mark.parametrize("unused_parameter", list(range(n_tests)))
 def test_adding_and_removing_players(unused_parameter):
     """
