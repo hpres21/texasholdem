@@ -1,16 +1,19 @@
+import numpy as np
 from poker_game import Player, PokerTable
 from npc import NpcRandom, NpcStrategy1
 from printing import print_title, print_cowboy, print_cards
 
 
-def run_player_decisions(table: PokerTable, start_index: int = 0) -> int:
+def run_player_decisions(table: PokerTable) -> int:
     """
     This function asks each player for their decision
     :during the current round of action
     """
     small_blind = table.big_blind // 2
 
-    player = table.active_players[start_index]
+    player = table.active_players[
+        0
+    ]  # first player in list is always little blind
 
     num_active_players = len(table.active_players)
     while num_active_players > 1 and player.status != "highest bettor":
@@ -40,6 +43,8 @@ def run_player_decisions(table: PokerTable, start_index: int = 0) -> int:
 def end_round(table: PokerTable, winner: Player) -> None:
     table.payout(winner)
     table.reset()
+    table.players = np.roll(table.players, -1)
+    table.active_players = [p for p in table.players if p.stack > 0]
 
 
 def run_round(pokertable: PokerTable):
@@ -47,19 +52,12 @@ def run_round(pokertable: PokerTable):
     This function holds the logic to play a single round of poker
     """
 
-    little_blind_index = [
-        i
-        for i in range(len(pokertable.active_players))
-        if pokertable.active_players[i].status == "little blind"
-    ][0]
-
+    # deal players their cards
     for player in pokertable.active_players:
         player.draw_hand(pokertable.deck)
 
     # pre flop
-    num_remaining_players = run_player_decisions(
-        table=pokertable, start_index=little_blind_index
-    )
+    num_remaining_players = run_player_decisions(pokertable)
 
     if num_remaining_players == 1:
         winner = pokertable.active_players[0]
@@ -74,9 +72,7 @@ def run_round(pokertable: PokerTable):
         print(print_cards(pokertable.board) + "\n")
 
     # flop
-    num_remaining_players = run_player_decisions(
-        table=pokertable, start_index=little_blind_index
-    )
+    num_remaining_players = run_player_decisions(pokertable)
 
     if num_remaining_players == 1:
         winner = pokertable.active_players[0]
@@ -90,9 +86,7 @@ def run_round(pokertable: PokerTable):
         print(print_cards(pokertable.board) + "\n")
 
     # turn
-    num_remaining_players = run_player_decisions(
-        table=pokertable, start_index=little_blind_index
-    )
+    num_remaining_players = run_player_decisions(pokertable)
 
     if num_remaining_players == 1:
         winner = pokertable.active_players[0]
@@ -106,9 +100,7 @@ def run_round(pokertable: PokerTable):
         print(print_cards(pokertable.board) + "\n")
 
     # river
-    num_remaining_players = run_player_decisions(
-        table=pokertable, start_index=little_blind_index
-    )
+    num_remaining_players = run_player_decisions(pokertable)
 
     if num_remaining_players == 1:
         winner = pokertable.active_players[0]
@@ -192,13 +184,8 @@ def run_game(dict_of_player_types=None, stack_size=1000):
     blind_index = 0
     while len(pokertable.players) > 1:
         # preflop
-        num_active_players = len(pokertable.active_players)
-        pokertable.active_players[
-            blind_index % num_active_players
-        ].status = "little blind"
-        pokertable.active_players[
-            (blind_index + 1) % num_active_players
-        ].status = "big blind"
+        pokertable.active_players[0].status = "little blind"
+        pokertable.active_players[1].status = "big blind"
         run_round(pokertable)
         for player in pokertable.players:
             if player.stack <= 0:
@@ -213,9 +200,3 @@ def run_game(dict_of_player_types=None, stack_size=1000):
     print(
         f"\nCongratulations {pokertable.players[0].name}! You won the game.\n"
     )
-
-
-# run_game(
-#     {"Jonathan": "h", "Jiachen": "h", "Henry": "h"},
-#     stack_size=1000,
-# )
