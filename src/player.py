@@ -3,14 +3,138 @@ import random
 import bisect
 import rank
 import numpy as np
+from dataclasses import dataclass
 from deck import Deck, Card
-from poker_game import Player
+from rank import BestHand
 
+
+@dataclass
+class Player:
+    name: str = random.sample(["Henry", "Jiachen", "Jonathan"], 1)[0]
+    stack: int = 0
+    hand = []
+    bet_this_round: int = 0
+    current_decision: int | str | None = None
+    status: (
+        str | None
+    ) = None  # 'little blind', 'big blind', 'dealer' 'highest bettor'
+
+    def __repr__(self) -> str:
+        return str((self.name, self.stack, self.hand))
+
+    def draw_hand(self, deck: Deck) -> None:
+        self.hand = [deck.draw() for _ in range(2)]
+
+    def clear_hand(self) -> None:
+        self.hand = []
+
+    def best_hand(self, board: list[Card]) -> BestHand:
+        return BestHand(self.hand, board)
+
+    def reset_action(self):
+        self.status = None
+        self.current_decision = None
+        self.bet_this_round = 0
+
+    def bet(self, action: int) -> None:
+        """
+        Sets current_decision and bet_this_round attributs on self
+        """
+        self.current_decision = action
+        self.bet_this_round += self.current_decision
+
+    def decision(
+        self,
+        table_cards: list,
+        current_bet: int,
+        pot: int,
+        asking_again_message: str = None,
+    ) -> None:
+        """
+        Decision method prompts the user to choose an action for their turn.
+        """
+        # Skip player who is all-in
+        if self.stack == 0:
+            self.current_decision = 0
+            return
+
+        if asking_again_message is None:
+            action = input(
+                f"Awaiting {self.name}'s decision...\n"
+                "\tcards on table:\t" + " ".join(map(str, table_cards)) + "\n"
+                f"\tpot:\t\t${pot}\n"
+                f"\tcurrent bet:\t${current_bet}\n"
+                "\n"
+                "\thand:\t\t" + " ".join(map(str, self.hand)) + "\n"
+                f"\tstack:\t\t${self.stack}\n"
+                f"\talready bet:\t${self.bet_this_round}\n"
+                "Please make a decision: "
+            )
+        else:
+            action = input(asking_again_message)
+        try:
+            action = int(action)
+            if current_bet <= action <= self.stack:
+                self.bet(action - self.bet_this_round)
+            elif action < current_bet:
+                self.decision(
+                    table_cards,
+                    current_bet,
+                    pot,
+                    asking_again_message="Your bet ain't high enough, cowbo"
+                    "y. Try again: ",
+                )
+            elif action - self.bet_this_round > self.stack:
+                self.decision(
+                    table_cards,
+                    current_bet,
+                    pot,
+                    asking_again_message="Not enough chips in the stack for"
+                    " that one. Please bet a valid amount: ",
+                )
+        except ValueError:
+            if action.upper() == "CALL":
+                if self.bet_this_round < current_bet <= self.stack:
+                    self.bet(current_bet - self.bet_this_round)
+                elif current_bet == 0:
+                    self.decision(
+                        table_cards,
+                        current_bet,
+                        pot,
+                        asking_again_message="You cannot call. Try something "
+                        "else: ",
+                    )
+                else:
+                    self.bet(self.stack)
+            elif action.upper() == "CHECK":
+                if current_bet == self.bet_this_round:
+                    self.current_decision = 0
+                    self.status = None
+                else:
+                    self.decision(
+                        table_cards,
+                        current_bet,
+                        pot,
+                        asking_again_message="You cannot check. Try something"
+                        " else: ",
+                    )
+            elif action.upper() == "ALL IN":
+                self.bet(self.stack)
+            elif action.upper() == "FOLD":
+                self.current_decision = "FOLD"
+            else:
+                self.decision(
+                    table_cards,
+                    current_bet,
+                    pot,
+                    asking_again_message="Invalid decision. Try something els"
+                    "e: ",
+                )
 
 class NpcRandom(Player):
     """
     This is a NPC player that will randomly make decisions no matter what its
-    hand and board are.
+    hand and table cards are.
     """
 
     name: str = None
@@ -19,7 +143,13 @@ class NpcRandom(Player):
         self.name = name
         self.stack = stack
 
-    def decision(self, current_bet: int, pot: int, board: list[Card]) -> None:
+    def decision(
+            self,
+            table_cards: list,
+            current_bet: int,
+            pot: int,
+            asking_again_message: str = None,
+    ) -> None:
         """
         Decision method prompts the npc to choose an action for their turn.
         The npc will decide randomly between all choices.
@@ -71,7 +201,13 @@ class NpcStrategy1(Player):
         self.name = name
         self.stack = stack
 
-    def decision(self, current_bet: int, pot: int, board: list[Card]) -> None:
+    def decision(
+            self,
+            table_cards: list,
+            current_bet: int,
+            pot: int,
+            asking_again_message: str = None,
+    ) -> None:
         """
         Decision method prompts the npc to choose an action for their turn.
         The npc will decide based on the probability of winning.
@@ -86,7 +222,7 @@ class NpcStrategy1(Player):
             self.current_decision = 0
             self.status = None
         else:
-            p_win, p_std = self.analysis(board)
+            p_win, p_std = self.analysis(table_cards)
             # FOLD when analysis result is negative
             if p_win * pot < (1 - p_win) * (current_bet - self.bet_this_round):
                 self.current_decision = "FOLD"
@@ -97,21 +233,21 @@ class NpcStrategy1(Player):
                 else:
                     self.bet(self.stack - self.bet_this_round)
 
-    def analysis(self, board: list[Card]) -> tuple[float, float]:
+    def analysis(self, table_cards: list[Card]) -> tuple[float, float]:
         deck = Deck()
         my_possible_hands = []
         other_possible_hands = []
 
         for hand in itertools.combinations(
-            [card for card in deck.deck if card not in (self.hand + board)],
-            5 - len(board),
+            [card for card in deck.deck if card not in (self.hand + table_cards)],
+            5 - len(table_cards),
         ):
             other_possible_hands = [
-                rank.BestHand(self.hand, board + list(hand)).best_hand
+                rank.BestHand(self.hand, table_cards + list(hand)).best_hand
             ]
         for hand in itertools.combinations(
-            [card for card in deck.deck if card not in (self.hand + board)],
-            5 - len(board),
+            [card for card in deck.deck if card not in (self.hand + table_cards)],
+            5 - len(table_cards),
         ):
             other_possible_hands = [
                 rank.BestHand(list(hand[:2]), list(hand[2:])).best_hand
@@ -128,7 +264,7 @@ class NpcStrategy1(Player):
                 / 2
                 / len(other_possible_hands)
             )
-        return p_win.mean, np.std(p_win)
+        return p_win.mean, float(np.std(p_win))
 
 
 class NpcStrategy2(Player):
@@ -145,7 +281,13 @@ class NpcStrategy2(Player):
         self.name = name
         self.stack = stack
 
-    def decision(self, current_bet: int, pot: int, board: list[Card]) -> None:
+    def decision(
+            self,
+            table_cards: list,
+            current_bet: int,
+            pot: int,
+            asking_again_message: str = None,
+    ) -> None:
         """
         Decision method prompts the npc to choose an action for their turn.
         The npc will decide based on the probability of winning, and
@@ -161,7 +303,7 @@ class NpcStrategy2(Player):
             self.current_decision = 0
             self.status = None
         else:
-            p_win, p_std = self.analysis(board)
+            p_win, p_std = self.analysis(table_cards)
             # generate a random winning probability based on gaussian
             # distribution
             p_random = np.random.normal(loc=p_win, scale=p_std)
@@ -187,21 +329,21 @@ class NpcStrategy2(Player):
                 else:
                     self.bet(self.stack - self.bet_this_round)
 
-    def analysis(self, board: list[Card]) -> tuple[float, float]:
+    def analysis(self, table_cards: list[Card]) -> tuple[float, float]:
         deck = Deck()
         my_possible_hands = []
         other_possible_hands = []
 
         for hand in itertools.combinations(
-            [card for card in deck.deck if card not in (self.hand + board)],
-            5 - len(board),
+            [card for card in deck.deck if card not in (self.hand + table_cards)],
+            5 - len(table_cards),
         ):
             other_possible_hands = [
-                rank.BestHand(self.hand, board + list(hand)).best_hand
+                rank.BestHand(self.hand, table_cards + list(hand)).best_hand
             ]
         for hand in itertools.combinations(
-            [card for card in deck.deck if card not in (self.hand + board)],
-            5 - len(board),
+            [card for card in deck.deck if card not in (self.hand + table_cards)],
+            5 - len(table_cards),
         ):
             other_possible_hands = [
                 rank.BestHand(list(hand[:2]), list(hand[2:])).best_hand
@@ -218,4 +360,4 @@ class NpcStrategy2(Player):
                 / 2
                 / len(other_possible_hands)
             )
-        return p_win.mean, np.std(p_win)
+        return p_win.mean, float(np.std(p_win))

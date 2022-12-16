@@ -35,7 +35,7 @@ def test_npc_random(unused_parameter):
     p1.bet_this_round = random.randint(0, stack)
     # call the decision method
     current_bet = random.randint(0, 100)
-    p1.decision(current_bet=current_bet, pot=0, board=[])
+    p1.decision(table_cards=[], current_bet=current_bet, pot=0)
     if isinstance(p1.current_decision, int):
         assert p1.current_decision in list(
             range(
@@ -59,7 +59,7 @@ def test_npc_strategy1_analysis(unused_parameter):
     # set up the status before decision
     p1.draw_hand(deck)
     # call the analysis method
-    p, p_std = p1.analysis(board=[deck.draw() for _ in range(5)])
+    p, p_std = p1.analysis(table_cards=[deck.draw() for _ in range(5)])
     assert 0 <= p <= 1
     assert p_std < min(p, 1 - p)
 
@@ -81,7 +81,8 @@ def test_npc_strategy1_decision(unused_parameter):
     current_bet = random.randint(0, 100)
     pot = random.randint(0, 200)
     p1.decision(
-        current_bet=current_bet, pot=pot, board=[deck.draw() for _ in range(5)]
+        table_cards=[deck.draw() for _ in range(5)],
+        current_bet=current_bet, pot=pot
     )
     if isinstance(p1.current_decision, int):
         assert p1.current_decision in list(
@@ -106,7 +107,7 @@ def test_npc_strategy2_analysis(unused_parameter):
     # set up the status before decision
     p1.draw_hand(deck)
     # call the analysis method
-    p, p_std = p1.analysis(board=[deck.draw() for _ in range(5)])
+    p, p_std = p1.analysis(table_cards=[deck.draw() for _ in range(5)])
     assert 0 <= p <= 1
     assert p_std < min(p, 1 - p)
 
@@ -128,7 +129,7 @@ def test_npc_strategy2_decision(unused_parameter):
     current_bet = random.randint(0, 100)
     pot = random.randint(0, 200)
     p1.decision(
-        current_bet=current_bet, pot=pot, board=[deck.draw() for _ in range(5)]
+        current_bet=current_bet, pot=pot, table_cards=[deck.draw() for _ in range(5)]
     )
     if isinstance(p1.current_decision, int):
         assert p1.current_decision in list(

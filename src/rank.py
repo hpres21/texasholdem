@@ -122,18 +122,22 @@ class BestHand:
                         self._update_rank("straight flush")
                         temp_bh = sorted_hand
                 else:
-                    if self.rank == "straight" and sorted_hand[0] > temp_bh[0]:
-                        temp_bh = sorted_hand
+                    if self.rank == "straight":
+                        print('ha')
+                        if sorted_hand[0] > temp_bh[0]:
+                            temp_bh = sorted_hand
                     elif self._update_rank("straight"):
                         temp_bh = sorted_hand
             elif is_flush:
-                if self.rank == "flush" and sorted_hand[0] > temp_bh[0]:
-                    temp_bh = sorted_hand
+                if self.rank == "flush":
+                    if sorted_hand[0] > temp_bh[0]:
+                        temp_bh = sorted_hand
                 elif self._update_rank("flush"):
                     temp_bh = sorted_hand
         if self.rank in ["straight", "flush", "straight flush", "royal flush"]:
-            if self.rank == "straight flush" and temp_bh[0].value == 14:
-                self.rank = "royal flush"
+            if self.rank == "straight flush":
+                if temp_bh[0].value == 14:
+                    self.rank = "royal flush"
             self.best_hand = temp_bh
         return None
 
