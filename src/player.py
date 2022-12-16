@@ -74,7 +74,7 @@ class Player:
             action = input(asking_again_message)
         try:
             action = int(action)
-            if current_bet <= action <= self.stack:
+            if current_bet <= action <= self.stack + self.bet_this_round:
                 self.bet(action - self.bet_this_round)
             elif action < current_bet:
                 self.decision(
@@ -94,7 +94,7 @@ class Player:
                 )
         except ValueError:
             if action.upper() == "CALL":
-                if self.bet_this_round < current_bet <= self.stack:
+                if self.bet_this_round < current_bet <= self.stack + self.bet_this_round:
                     self.bet(current_bet - self.bet_this_round)
                 elif current_bet == 0:
                     self.decision(
@@ -160,10 +160,10 @@ class NpcRandom(Player):
             self.current_decision = 0
             return
 
-        if current_bet * 2 < self.stack:
+        if current_bet * 2 < self.stack + self.bet_this_round:
             possible_action = {
                 "FOLD",
-                random.randint(current_bet * 2, self.stack + 1),
+                random.randint(current_bet * 2, self.stack + self.bet_this_round),
             }
         else:
             possible_action = {"FOLD"}
@@ -179,10 +179,10 @@ class NpcRandom(Player):
             self.bet(action - self.bet_this_round)
         except ValueError:
             if action.upper() == "CALL":
-                if self.bet_this_round < current_bet <= self.stack:
+                if self.bet_this_round < current_bet <= self.stack + self.bet_this_round:
                     self.bet(current_bet - self.bet_this_round)
                 else:
-                    self.bet(self.stack - self.bet_this_round)
+                    self.bet(self.stack)
             elif action.upper() == "CHECK":
                 self.current_decision = 0
                 self.status = None
@@ -229,10 +229,10 @@ class NpcStrategy1(Player):
                 self.current_decision = "FOLD"
             # CALL when analysis result is positive
             else:
-                if current_bet <= self.stack:
+                if current_bet <= self.stack + self.bet_this_round:
                     self.bet(current_bet - self.bet_this_round)
                 else:
-                    self.bet(self.stack - self.bet_this_round)
+                    self.bet(self.stack)
 
     def analysis(self, table_cards: list[Card]) -> tuple[float, float]:
         deck = Deck()
@@ -327,16 +327,16 @@ class NpcStrategy2(Player):
                 self.current_decision = "FOLD"
             # CALL when analysis result is positive
             elif p_random == 1:
-                self.bet(self.stack - self.bet_this_round)
+                self.bet(self.stack)
             else:
-                bet_size = int(p_random / (1 - p_random) * pot)
-                if bet_size < self.stack:
-                    if bet_size < 2 * current_bet:
+                add_bet_size = int(p_random / (1 - p_random) * pot)
+                if add_bet_size < self.stack:
+                    if add_bet_size + self.bet_this_round < 2 * current_bet:
                         self.bet(current_bet - self.bet_this_round)
                     else:
-                        self.bet(bet_size - self.bet_this_round)
+                        self.bet(add_bet_size)
                 else:
-                    self.bet(self.stack - self.bet_this_round)
+                    self.bet(self.stack)
 
     def analysis(self, table_cards: list[Card]) -> tuple[float, float]:
         deck = Deck()

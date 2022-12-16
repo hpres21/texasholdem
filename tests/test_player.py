@@ -105,7 +105,7 @@ def test_npc_random(unused_parameter):
         assert p1.current_decision in list(
             range(
                 2 * current_bet - p1.bet_this_round,
-                p1.stack - p1.bet_this_round,
+                p1.stack + 1
             )
         ) + [0, current_bet - p1.bet_this_round]
     else:
@@ -154,7 +154,7 @@ def test_npc_strategy1_decision(unused_parameter):
         assert p1.current_decision in list(
             range(
                 2 * current_bet - p1.bet_this_round,
-                p1.stack - p1.bet_this_round,
+                p1.stack + 1
             )
         ) + [0, current_bet - p1.bet_this_round]
     else:
@@ -203,7 +203,7 @@ def test_npc_strategy2_decision(unused_parameter):
         assert p1.current_decision in list(
             range(
                 2 * current_bet - p1.bet_this_round,
-                p1.stack - p1.bet_this_round,
+                p1.stack + 1
             )
         ) + [0, current_bet - p1.bet_this_round]
     else:
