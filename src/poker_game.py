@@ -1,8 +1,7 @@
 from __future__ import annotations
-import random
 from dataclasses import dataclass
-from deck import Deck, Card
-
+from deck import Deck
+from player import Player
 
 @dataclass
 class PokerTable:
