@@ -127,8 +127,9 @@ class NpcRandom(Player):
     """
     name: str = None
 
-    def __init__(self, name):
+    def __init__(self, name, stack):
         self.name = name
+        self.stack = stack
 
     def decision(self, current_bet: int, pot: int, board: list[Card]) -> None:
         """
@@ -159,7 +160,7 @@ class NpcRandom(Player):
                 if self.bet_this_round < current_bet <= self.stack:
                     self.bet(current_bet - self.bet_this_round)
                 else:
-                    self.bet(self.stack)
+                    self.bet(self.stack - self.bet_this_round)
             elif action.upper() == "CHECK":
                 self.current_decision = 0
                 self.status = None
@@ -173,8 +174,9 @@ class NpcStrategy1(Player):
     """
     name: str = None
 
-    def __init__(self, name):
+    def __init__(self, name, stack):
         self.name = name
+        self.stack = stack
 
     def decision(self, current_bet: int, pot: int, board: list[Card]) -> None:
         """
@@ -230,8 +232,9 @@ class NpcStrategy2(Player):
     """
     name: str = None
 
-    def __init__(self, name):
+    def __init__(self, name, stack):
         self.name = name
+        self.stack = stack
 
     def decision(self, current_bet: int, pot: int, board: list[Card]) -> None:
         """
@@ -251,14 +254,23 @@ class NpcStrategy2(Player):
             p_win, p_std = self.analysis(board)
             # generate a random winning probability based on gaussian distribution
             p_random = np.random.normal(loc=p_win, scale=p_std)
+            if p_random < 0:
+                p_random = 0
+            elif p_random > 1:
+                p_random = 1
             # FOLD when analysis result is negative
             if p_random * pot < (1 - p_random) * (current_bet - self.bet_this_round):
                 self.current_decision = "FOLD"
             # CALL when analysis result is positive
+            elif p_random == 1:
+                self.bet(self.stack - self.bet_this_round)
             else:
-                bet_size = p_random / (1 - p_random) * pot
+                bet_size = int(p_random / (1 - p_random) * pot)
                 if bet_size < self.stack:
-                    self.bet(bet_size - self.bet_this_round)
+                    if bet_size < 2 * current_bet:
+                        self.bet(current_bet - self.bet_this_round)
+                    else:
+                        self.bet(bet_size - self.bet_this_round)
                 else:
                     self.bet(self.stack - self.bet_this_round)
 
