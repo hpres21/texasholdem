@@ -86,7 +86,7 @@ class BestHand:
             return None
 
     def _check_straight_or_flush(self):
-        temp_bh = []
+        temp_bh = [Card(value=0, suit='')]
         # for all possible combinations
         for hand in itertools.combinations(self.__pocket + self.__board, 5):
             # sort it descending
@@ -104,7 +104,7 @@ class BestHand:
             # if it is the special case [A 5 4 3 2], change it to
             # [5 4 3 2 A] to make it the smallest straight
             if sorted_value == [14, 5, 4, 3, 2]:
-                sorted_hand = [sorted_hand[1:], sorted_hand[0]]
+                sorted_hand = sorted_hand[1:] + sorted_hand[0:1]
                 is_straight = True
             elif (
                 len(set(sorted_value)) == 5
@@ -123,7 +123,8 @@ class BestHand:
                         temp_bh = sorted_hand
                 else:
                     if self.rank == "straight":
-                        print("ha")
+                        # print("ha")
+                        print(temp_bh)
                         if sorted_hand[0] > temp_bh[0]:
                             temp_bh = sorted_hand
                     elif self._update_rank("straight"):

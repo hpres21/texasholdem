@@ -100,12 +100,15 @@ def test_npc_random(unused_parameter):
     p1.bet_this_round = random.randint(0, stack)
     # call the decision method
     current_bet = random.randint(0, 100)
-    possible_bet = list(
-            range(
-                2 * current_bet - p1.bet_this_round,
-                p1.stack + 1
-            )
-        ) + [0, current_bet - p1.bet_this_round]
+    if 2 * current_bet - p1.bet_this_round <= p1.stack:
+        possible_bet = list(
+                range(
+                    2 * current_bet - p1.bet_this_round,
+                    p1.stack + 1
+                )
+            ) + [0, current_bet - p1.bet_this_round]
+    else:
+        possible_bet = [0, current_bet - p1.bet_this_round, p1.stack]
     p1.decision(current_bet=current_bet, pot=0, table_cards=[])
     if isinstance(p1.current_decision, int):
         assert p1.current_decision in possible_bet
@@ -127,7 +130,7 @@ def test_npc_strategy1_analysis(unused_parameter):
     # call the analysis method
     p, p_std = p1.analysis(table_cards=[deck.draw() for _ in range(5)])
     assert 0 <= p <= 1
-    assert p_std < min(p, 1 - p)
+    assert p_std <= min(p, 1 - p)
 
 
 @pytest.mark.parametrize("unused_parameter", list(range(n_tests)))
@@ -146,12 +149,15 @@ def test_npc_strategy1_decision(unused_parameter):
     # call the decision method
     current_bet = random.randint(0, 100)
     pot = random.randint(0, 200)
-    possible_bet = list(
-            range(
-                2 * current_bet - p1.bet_this_round,
-                p1.stack + 1
-            )
-        ) + [0, current_bet - p1.bet_this_round]
+    if 2 * current_bet - p1.bet_this_round <= p1.stack:
+        possible_bet = list(
+                range(
+                    2 * current_bet - p1.bet_this_round,
+                    p1.stack + 1
+                )
+            ) + [0, current_bet - p1.bet_this_round]
+    else:
+        possible_bet = [0, current_bet - p1.bet_this_round, p1.stack]
     p1.decision(
         current_bet=current_bet,
         pot=pot,
@@ -177,7 +183,7 @@ def test_npc_strategy2_analysis(unused_parameter):
     # call the analysis method
     p, p_std = p1.analysis(table_cards=[deck.draw() for _ in range(5)])
     assert 0 <= p <= 1
-    assert p_std < min(p, 1 - p)
+    assert p_std <= min(p, 1 - p)
 
 
 @pytest.mark.parametrize("unused_parameter", list(range(n_tests)))
@@ -196,12 +202,15 @@ def test_npc_strategy2_decision(unused_parameter):
     # call the decision method
     current_bet = random.randint(0, 100)
     pot = random.randint(0, 200)
-    possible_bet = list(
-            range(
-                2 * current_bet - p1.bet_this_round,
-                p1.stack + 1
-            )
-        ) + [0, current_bet - p1.bet_this_round]
+    if 2 * current_bet - p1.bet_this_round <= p1.stack:
+        possible_bet = list(
+                range(
+                    2 * current_bet - p1.bet_this_round,
+                    p1.stack + 1
+                )
+            ) + [0, current_bet - p1.bet_this_round]
+    else:
+        possible_bet = [0, current_bet - p1.bet_this_round, p1.stack]
     p1.decision(
         current_bet=current_bet,
         pot=pot,

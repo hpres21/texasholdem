@@ -240,26 +240,27 @@ class NpcStrategy1(Player):
         other_possible_hands = []
 
         for hand in itertools.combinations(
-            [
-                card
-                for card in deck.deck
-                if card not in (self.hand + table_cards)
-            ],
-            5 - len(table_cards),
+                [
+                    card
+                    for card in deck.deck
+                    if card not in self.hand + table_cards
+                ],
+                5 - len(table_cards),
         ):
-            other_possible_hands = [
+            my_possible_hands = [
                 rank.BestHand(self.hand, table_cards + list(hand)).best_hand
             ]
+
         for hand in itertools.combinations(
-            [
-                card
-                for card in deck.deck
-                if card not in (self.hand + table_cards)
-            ],
-            5 - len(table_cards),
+                [
+                    card
+                    for card in deck.deck
+                    if card not in self.hand + table_cards
+                ],
+                7 - len(table_cards),
         ):
             other_possible_hands = [
-                rank.BestHand(list(hand[:2]), list(hand[2:])).best_hand
+                rank.BestHand(list(hand)[0:2], table_cards + list(hand)[2:]).best_hand
             ]
         other_possible_hands.sort()
 
@@ -267,16 +268,16 @@ class NpcStrategy1(Player):
         for bh in my_possible_hands:
             p_win.append(
                 (
-                    bisect.bisect_left(other_possible_hands, bh)
-                    + bisect.bisect_right(other_possible_hands, bh)
+                        bisect.bisect_left(other_possible_hands, bh)
+                        + bisect.bisect_right(other_possible_hands, bh)
                 )
                 / 2
                 / len(other_possible_hands)
             )
-        return p_win.mean, float(np.std(p_win))
+        return float(np.mean(p_win)), float(np.std(p_win))
 
 
-class NpcStrategy2(Player):
+class NpcStrategy2(NpcStrategy1):
     """
     This is a NPC player that will make decisions from CHECK, FOLD, CALL, and
     BET based on probability of winning based. The difference from
@@ -337,44 +338,3 @@ class NpcStrategy2(Player):
                         self.bet(add_bet_size)
                 else:
                     self.bet(self.stack)
-
-    def analysis(self, table_cards: list[Card]) -> tuple[float, float]:
-        deck = Deck()
-        my_possible_hands = []
-        other_possible_hands = []
-
-        for hand in itertools.combinations(
-            [
-                card
-                for card in deck.deck
-                if card not in (self.hand + table_cards)
-            ],
-            5 - len(table_cards),
-        ):
-            other_possible_hands = [
-                rank.BestHand(self.hand, table_cards + list(hand)).best_hand
-            ]
-        for hand in itertools.combinations(
-            [
-                card
-                for card in deck.deck
-                if card not in (self.hand + table_cards)
-            ],
-            5 - len(table_cards),
-        ):
-            other_possible_hands = [
-                rank.BestHand(list(hand[:2]), list(hand[2:])).best_hand
-            ]
-        other_possible_hands.sort()
-
-        p_win: list[float] = []
-        for bh in my_possible_hands:
-            p_win.append(
-                (
-                    bisect.bisect_left(other_possible_hands, bh)
-                    + bisect.bisect_right(other_possible_hands, bh)
-                )
-                / 2
-                / len(other_possible_hands)
-            )
-        return p_win.mean, float(np.std(p_win))
