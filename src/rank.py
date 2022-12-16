@@ -123,7 +123,7 @@ class BestHand:
                         temp_bh = sorted_hand
                 else:
                     if self.rank == "straight":
-                        print('ha')
+                        print("ha")
                         if sorted_hand[0] > temp_bh[0]:
                             temp_bh = sorted_hand
                     elif self._update_rank("straight"):
