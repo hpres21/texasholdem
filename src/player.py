@@ -112,9 +112,6 @@ class Player:
                 elif current_bet > self.stack:
                     print("Your stack is less than the current bet, doing ALL IN instead.")
                     self.bet(self.stack - self.bet_this_round)
-                # for testing, to be removed
-                else:
-                    assert False, "something is wrong"
             else:
                 print("Invalid decision.")
                 self.decision(current_bet, pot, board)
