@@ -221,8 +221,8 @@ class PokerTable:
         Resets table status
         """
         self.pot_size = 0
-        self.players = []
-        self.active_players = []
+        # self.players = []
+        # self.active_players = []
         self.board = []
         self.current_bet = 0
         self.deck = Deck()
