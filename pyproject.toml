@@ -18,6 +18,7 @@ requires-python = ">=3.7"
 [project.optional-dependencies]
 test = [
 	"pytest",
+	"numpy"
 ]
 
 [tool.black]
