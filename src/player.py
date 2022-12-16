@@ -1,4 +1,3 @@
-import functools
 import itertools
 import random
 import bisect
@@ -204,7 +203,6 @@ class NpcStrategy1(Player):
                 else:
                     self.bet(self.stack - self.bet_this_round)
 
-    @functools.cache
     def analysis(self, board: list[Card]) -> tuple[float, float]:
         deck = Deck()
         my_possible_hands = []
@@ -274,7 +272,6 @@ class NpcStrategy2(Player):
                 else:
                     self.bet(self.stack - self.bet_this_round)
 
-    @functools.cache
     def analysis(self, board: list[Card]) -> tuple[float, float]:
         deck = Deck()
         my_possible_hands = []
