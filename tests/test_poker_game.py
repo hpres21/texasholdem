@@ -1,7 +1,6 @@
 # flake8: noqa
 import pytest
 import random
-from unittest.mock import patch
 from deck import Card, Deck
 from player import Player
 from poker_game import PokerTable
@@ -39,71 +38,6 @@ def test_drawing_table_cards(unused_parameter):
     table.draw_card()
     table.draw_card()
     assert len(table.board) == 5
-
-
-@patch("builtins.input", lambda _: "CHECK")
-def test_player_check():
-    """
-    Tests whether the the player's decision to check is valid.
-    """
-    test_player = Player("test", stack=1000)
-    test_player.decision([], 0, 0)
-    assert test_player.current_decision == 0
-
-
-@patch("builtins.input", lambda _: 50)
-def test_player_bet():
-    """
-    Tests whether the player's decision to bet is valid.
-    """
-    test_player = Player("test", stack=1000)
-    test_player.decision([], 0, 0)
-    assert test_player.current_decision == 50
-
-
-@patch("builtins.input", lambda _: "CALL")
-def test_player_call():
-    """
-    Tests whether the player's decision to call is valid.
-    """
-    test_player = Player("test", stack=1000)
-    test_player.decision([], 15, 15)
-    assert test_player.current_decision == 15
-
-
-@patch("builtins.input", lambda _: "FOLD")
-def test_player_fold():
-    """
-    Tests whether the player can fold
-    """
-    test_player = Player("test", stack=1000)
-    test_player.decision([], 15, 15)
-    assert test_player.current_decision == "FOLD"
-
-
-@patch("builtins.input", lambda _: "ALL IN")
-def test_player_all_in():
-    """
-    Tests whether the player can fold
-    """
-    test_player = Player("test", stack=1000)
-    test_player.decision([], 15, 15)
-    assert test_player.current_decision == test_player.stack
-
-
-def test_player_reset_action():
-    """
-    Method to test a reset action of a
-    """
-    deck = Deck()
-    test_player = Player(stack=1000)
-    test_player.current_decision = random.randint(1, 1000)
-    test_player.status = "highest bettor"
-    test_player.bet_this_round = random.randint(1, 1000)
-    test_player.reset_action()
-    assert test_player.status == None
-    assert test_player.current_decision == None
-    assert test_player.bet_this_round == 0
 
 
 def test_table_payout():
