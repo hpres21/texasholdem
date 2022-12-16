@@ -24,7 +24,7 @@ After installation, you can play the game! To start the game, use the ``.()`` fu
 
    Return ...(describe how to play the game here)
 
-   :param kind: 
+   :param kind:
    :type kind:
-   :return: 
+   :return:
    :rtype:
