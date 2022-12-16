@@ -94,7 +94,11 @@ class Player:
                 )
         except ValueError:
             if action.upper() == "CALL":
-                if self.bet_this_round < current_bet <= self.stack + self.bet_this_round:
+                if (
+                    self.bet_this_round
+                    < current_bet
+                    <= self.stack + self.bet_this_round
+                ):
                     self.bet(current_bet - self.bet_this_round)
                 elif current_bet == 0:
                     self.decision(
@@ -163,7 +167,9 @@ class NpcRandom(Player):
         if current_bet * 2 < self.stack + self.bet_this_round:
             possible_action = {
                 "FOLD",
-                random.randint(current_bet * 2, self.stack + self.bet_this_round),
+                random.randint(
+                    current_bet * 2, self.stack + self.bet_this_round
+                ),
             }
         else:
             possible_action = {"FOLD"}
@@ -179,7 +185,11 @@ class NpcRandom(Player):
             self.bet(action - self.bet_this_round)
         except ValueError:
             if action.upper() == "CALL":
-                if self.bet_this_round < current_bet <= self.stack + self.bet_this_round:
+                if (
+                    self.bet_this_round
+                    < current_bet
+                    <= self.stack + self.bet_this_round
+                ):
                     self.bet(current_bet - self.bet_this_round)
                 else:
                     self.bet(self.stack)
@@ -240,27 +250,29 @@ class NpcStrategy1(Player):
         other_possible_hands = []
 
         for hand in itertools.combinations(
-                [
-                    card
-                    for card in deck.deck
-                    if card not in self.hand + table_cards
-                ],
-                5 - len(table_cards),
+            [
+                card
+                for card in deck.deck
+                if card not in self.hand + table_cards
+            ],
+            5 - len(table_cards),
         ):
             my_possible_hands = [
                 rank.BestHand(self.hand, table_cards + list(hand)).best_hand
             ]
 
         for hand in itertools.combinations(
-                [
-                    card
-                    for card in deck.deck
-                    if card not in self.hand + table_cards
-                ],
-                7 - len(table_cards),
+            [
+                card
+                for card in deck.deck
+                if card not in self.hand + table_cards
+            ],
+            7 - len(table_cards),
         ):
             other_possible_hands = [
-                rank.BestHand(list(hand)[0:2], table_cards + list(hand)[2:]).best_hand
+                rank.BestHand(
+                    list(hand)[0:2], table_cards + list(hand)[2:]
+                ).best_hand
             ]
         other_possible_hands.sort()
 
@@ -268,8 +280,8 @@ class NpcStrategy1(Player):
         for bh in my_possible_hands:
             p_win.append(
                 (
-                        bisect.bisect_left(other_possible_hands, bh)
-                        + bisect.bisect_right(other_possible_hands, bh)
+                    bisect.bisect_left(other_possible_hands, bh)
+                    + bisect.bisect_right(other_possible_hands, bh)
                 )
                 / 2
                 / len(other_possible_hands)

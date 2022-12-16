@@ -86,7 +86,7 @@ class BestHand:
             return None
 
     def _check_straight_or_flush(self):
-        temp_bh = [Card(value=0, suit='')]
+        temp_bh = [Card(value=0, suit="")]
         # for all possible combinations
         for hand in itertools.combinations(self.__pocket + self.__board, 5):
             # sort it descending

@@ -102,11 +102,8 @@ def test_npc_random(unused_parameter):
     current_bet = random.randint(0, 100)
     if 2 * current_bet - p1.bet_this_round <= p1.stack:
         possible_bet = list(
-                range(
-                    2 * current_bet - p1.bet_this_round,
-                    p1.stack + 1
-                )
-            ) + [0, current_bet - p1.bet_this_round]
+            range(2 * current_bet - p1.bet_this_round, p1.stack + 1)
+        ) + [0, current_bet - p1.bet_this_round]
     else:
         possible_bet = [0, current_bet - p1.bet_this_round, p1.stack]
     p1.decision(current_bet=current_bet, pot=0, table_cards=[])
@@ -151,11 +148,8 @@ def test_npc_strategy1_decision(unused_parameter):
     pot = random.randint(0, 200)
     if 2 * current_bet - p1.bet_this_round <= p1.stack:
         possible_bet = list(
-                range(
-                    2 * current_bet - p1.bet_this_round,
-                    p1.stack + 1
-                )
-            ) + [0, current_bet - p1.bet_this_round]
+            range(2 * current_bet - p1.bet_this_round, p1.stack + 1)
+        ) + [0, current_bet - p1.bet_this_round]
     else:
         possible_bet = [0, current_bet - p1.bet_this_round, p1.stack]
     p1.decision(
@@ -204,11 +198,8 @@ def test_npc_strategy2_decision(unused_parameter):
     pot = random.randint(0, 200)
     if 2 * current_bet - p1.bet_this_round <= p1.stack:
         possible_bet = list(
-                range(
-                    2 * current_bet - p1.bet_this_round,
-                    p1.stack + 1
-                )
-            ) + [0, current_bet - p1.bet_this_round]
+            range(2 * current_bet - p1.bet_this_round, p1.stack + 1)
+        ) + [0, current_bet - p1.bet_this_round]
     else:
         possible_bet = [0, current_bet - p1.bet_this_round, p1.stack]
     p1.decision(
