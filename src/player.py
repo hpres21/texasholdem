@@ -10,7 +10,7 @@ from poker_game import Player
 class NpcRandom(Player):
     """
     This is a NPC player that will randomly make decisions no matter what its
-    hand and board are.
+    hand and table cards are.
     """
 
     name: str = None
@@ -19,7 +19,13 @@ class NpcRandom(Player):
         self.name = name
         self.stack = stack
 
-    def decision(self, current_bet: int, pot: int, board: list[Card]) -> None:
+    def decision(
+            self,
+            table_cards: list,
+            current_bet: int,
+            pot: int,
+            asking_again_message: str = None,
+    ) -> None:
         """
         Decision method prompts the npc to choose an action for their turn.
         The npc will decide randomly between all choices.
@@ -71,7 +77,13 @@ class NpcStrategy1(Player):
         self.name = name
         self.stack = stack
 
-    def decision(self, current_bet: int, pot: int, board: list[Card]) -> None:
+    def decision(
+            self,
+            table_cards: list,
+            current_bet: int,
+            pot: int,
+            asking_again_message: str = None,
+    ) -> None:
         """
         Decision method prompts the npc to choose an action for their turn.
         The npc will decide based on the probability of winning.
@@ -86,7 +98,7 @@ class NpcStrategy1(Player):
             self.current_decision = 0
             self.status = None
         else:
-            p_win, p_std = self.analysis(board)
+            p_win, p_std = self.analysis(table_cards)
             # FOLD when analysis result is negative
             if p_win * pot < (1 - p_win) * (current_bet - self.bet_this_round):
                 self.current_decision = "FOLD"
@@ -97,21 +109,21 @@ class NpcStrategy1(Player):
                 else:
                     self.bet(self.stack - self.bet_this_round)
 
-    def analysis(self, board: list[Card]) -> tuple[float, float]:
+    def analysis(self, table_cards: list[Card]) -> tuple[float, float]:
         deck = Deck()
         my_possible_hands = []
         other_possible_hands = []
 
         for hand in itertools.combinations(
-            [card for card in deck.deck if card not in (self.hand + board)],
-            5 - len(board),
+            [card for card in deck.deck if card not in (self.hand + table_cards)],
+            5 - len(table_cards),
         ):
             other_possible_hands = [
-                rank.BestHand(self.hand, board + list(hand)).best_hand
+                rank.BestHand(self.hand, table_cards + list(hand)).best_hand
             ]
         for hand in itertools.combinations(
-            [card for card in deck.deck if card not in (self.hand + board)],
-            5 - len(board),
+            [card for card in deck.deck if card not in (self.hand + table_cards)],
+            5 - len(table_cards),
         ):
             other_possible_hands = [
                 rank.BestHand(list(hand[:2]), list(hand[2:])).best_hand
@@ -128,7 +140,7 @@ class NpcStrategy1(Player):
                 / 2
                 / len(other_possible_hands)
             )
-        return p_win.mean, np.std(p_win)
+        return p_win.mean, float(np.std(p_win))
 
 
 class NpcStrategy2(Player):
@@ -145,7 +157,13 @@ class NpcStrategy2(Player):
         self.name = name
         self.stack = stack
 
-    def decision(self, current_bet: int, pot: int, board: list[Card]) -> None:
+    def decision(
+            self,
+            table_cards: list,
+            current_bet: int,
+            pot: int,
+            asking_again_message: str = None,
+    ) -> None:
         """
         Decision method prompts the npc to choose an action for their turn.
         The npc will decide based on the probability of winning, and
@@ -161,7 +179,7 @@ class NpcStrategy2(Player):
             self.current_decision = 0
             self.status = None
         else:
-            p_win, p_std = self.analysis(board)
+            p_win, p_std = self.analysis(table_cards)
             # generate a random winning probability based on gaussian
             # distribution
             p_random = np.random.normal(loc=p_win, scale=p_std)
@@ -187,21 +205,21 @@ class NpcStrategy2(Player):
                 else:
                     self.bet(self.stack - self.bet_this_round)
 
-    def analysis(self, board: list[Card]) -> tuple[float, float]:
+    def analysis(self, table_cards: list[Card]) -> tuple[float, float]:
         deck = Deck()
         my_possible_hands = []
         other_possible_hands = []
 
         for hand in itertools.combinations(
-            [card for card in deck.deck if card not in (self.hand + board)],
-            5 - len(board),
+            [card for card in deck.deck if card not in (self.hand + table_cards)],
+            5 - len(table_cards),
         ):
             other_possible_hands = [
-                rank.BestHand(self.hand, board + list(hand)).best_hand
+                rank.BestHand(self.hand, table_cards + list(hand)).best_hand
             ]
         for hand in itertools.combinations(
-            [card for card in deck.deck if card not in (self.hand + board)],
-            5 - len(board),
+            [card for card in deck.deck if card not in (self.hand + table_cards)],
+            5 - len(table_cards),
         ):
             other_possible_hands = [
                 rank.BestHand(list(hand[:2]), list(hand[2:])).best_hand
@@ -218,4 +236,4 @@ class NpcStrategy2(Player):
                 / 2
                 / len(other_possible_hands)
             )
-        return p_win.mean, np.std(p_win)
+        return p_win.mean, float(np.std(p_win))
