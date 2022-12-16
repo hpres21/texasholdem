@@ -215,9 +215,7 @@ def run_game(dict_of_player_types=None, stack_size=1000):
     )
 
 
-run_game(
-    {"Jonathan": "h", "Jiachen": "h", "Henry": "h"},
-    stack_size=1000,
-)
-# run this for the fully printed intro
-run_game()
+# run_game(
+#     {"Jonathan": "h", "Jiachen": "h", "Henry": "h"},
+#     stack_size=1000,
+# )
