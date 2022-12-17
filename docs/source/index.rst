@@ -33,4 +33,5 @@ Contents
 .. toctree::
 
    usage
+   deck
    api
