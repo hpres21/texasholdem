@@ -107,7 +107,7 @@ def run_round(pokertable: PokerTable):
         end_round(pokertable, winner)
         return
     else:
-        winner = pokertable.determine_winner()
+        (winner,) = pokertable.determine_winner()
         end_round(pokertable, winner)
         print(f"\n{winner.name} won the round.\n")
         return
@@ -129,7 +129,17 @@ def initialize_game(dict_of_player_types=None, stack_size=1000):
         if stack_size is None:
             stack_size = int(input("Enter the stack size: "))
             print()
-        n_players = int(input("Enter the number of players: "))
+        while True:
+            try:
+                n_players = int(input("Enter the number of players: "))
+            except ValueError:
+                print(
+                    "Woah there! I don't reckon that's a valid number. "
+                    "Try again..."
+                )
+                continue
+            else:
+                break
         print()
         pokertable = PokerTable(max_num_players=n_players)
         print("Enter type for each player:")

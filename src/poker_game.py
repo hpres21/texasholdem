@@ -78,7 +78,12 @@ class PokerTable:
             if player.bet_this_round > self.current_bet:
                 self.current_bet = player.bet_this_round
                 self.set_highest_bettor(player)
-            print(f"{player.name} bets ${player.current_decision}")
+                print(
+                    f"{player.name} bets ${player.current_decision},"
+                    f" raise current bet to ${self.current_bet}"
+                )
+            else:
+                print(f"{player.name} bets ${player.current_decision}")
 
     def end_action(self) -> None:
         """
@@ -109,7 +114,7 @@ class PokerTable:
         game_hands = [p.best_hand(self.board) for p in self.active_players]
         besthand = max(game_hands)
         i = game_hands.index(besthand)
-        return self.active_players[i]
+        return self.active_players[i], game_hands
 
     def payout(self, player: Player) -> None:
         """
@@ -117,3 +122,5 @@ class PokerTable:
         """
         player.stack += self.pot_size
         self.pot_size = 0
+        for p in self.players:
+            p.bet_this_round = 0

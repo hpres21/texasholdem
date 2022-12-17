@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 import itertools
 import random
@@ -245,6 +247,7 @@ class NpcStrategy1(Player):
                     self.bet(self.stack)
 
     def analysis(self, table_cards: list[Card]) -> tuple[float, float]:
+        sample_rate = 0.01
         deck = Deck()
         my_possible_hands = []
         other_possible_hands = []
@@ -257,10 +260,12 @@ class NpcStrategy1(Player):
             ],
             5 - len(table_cards),
         ):
-            my_possible_hands = [
-                rank.BestHand(self.hand, table_cards + list(hand)).best_hand
-            ]
-
+            if random.random() < sample_rate:
+                my_possible_hands.append(
+                    rank.BestHand(
+                        self.hand, table_cards + list(hand)
+                    ).best_hand
+                )
         for hand in itertools.combinations(
             [
                 card
@@ -269,11 +274,12 @@ class NpcStrategy1(Player):
             ],
             7 - len(table_cards),
         ):
-            other_possible_hands = [
-                rank.BestHand(
-                    list(hand)[0:2], table_cards + list(hand)[2:]
-                ).best_hand
-            ]
+            if random.random() < sample_rate:
+                other_possible_hands.append(
+                    rank.BestHand(
+                        list(hand)[0:2], table_cards + list(hand)[2:]
+                    ).best_hand
+                )
         other_possible_hands.sort()
 
         p_win: list[float] = []
