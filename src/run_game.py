@@ -1,5 +1,5 @@
 import numpy as np
-from player import Player, NpcRandom, NpcStrategy1
+from player import Player, NpcRandom, NpcStrategy1, NpcStrategy2
 from poker_game import PokerTable
 from printing import print_title, print_cowboy, print_cards
 
@@ -136,11 +136,12 @@ def initialize_game(dict_of_player_types=None, stack_size=1000):
         print("\t'h'\thuman")
         print("\t'r'\trandom NPC")
         print("\t'1'\tstrategic npc 1")
+        print("\t'2'\tstrategic npc 2")
         for i in range(n_players):  # add players to table6
             while True:
                 try:
                     player_type = input(f"p{i} type: ")
-                    if player_type not in ["h", "r", "1"]:
+                    if player_type not in ["h", "r", "1", "2"]:
                         raise ValueError
                 except ValueError:
                     print(
@@ -165,6 +166,10 @@ def initialize_game(dict_of_player_types=None, stack_size=1000):
                 pokertable.add_player(
                     NpcStrategy1(name=f"p{i}", stack=stack_size)
                 )
+            elif player_type == "2":
+                pokertable.add_player(
+                    NpcStrategy2(name=f"p{i}", stack=stack_size)
+                )
     else:
         pokertable = PokerTable(max_num_players=len(dict_of_player_types))
         for name, player_type in dict_of_player_types.items():
@@ -175,6 +180,10 @@ def initialize_game(dict_of_player_types=None, stack_size=1000):
             elif player_type == "1":
                 pokertable.add_player(
                     NpcStrategy1(name=name, stack=stack_size)
+                )
+            elif player_type == "2":
+                pokertable.add_player(
+                    NpcStrategy2(name=name, stack=stack_size)
                 )
     return pokertable
 
