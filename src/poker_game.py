@@ -80,7 +80,7 @@ class PokerTable:
                 self.set_highest_bettor(player)
                 print(
                     f"{player.name} bets ${player.current_decision},"
-                    f" raise current bet to ${self.current_bet}"
+                    f" current bet is now ${self.current_bet}"
                 )
             else:
                 print(f"{player.name} bets ${player.current_decision}")

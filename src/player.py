@@ -260,7 +260,13 @@ class NpcStrategy1(Player):
             ],
             5 - len(table_cards),
         ):
-            if random.random() < sample_rate:
+            if len(my_possible_hands) < 10:
+                my_possible_hands.append(
+                    rank.BestHand(
+                        self.hand, table_cards + list(hand)
+                    ).best_hand
+                )
+            elif random.random() < sample_rate:
                 my_possible_hands.append(
                     rank.BestHand(
                         self.hand, table_cards + list(hand)
@@ -274,7 +280,13 @@ class NpcStrategy1(Player):
             ],
             7 - len(table_cards),
         ):
-            if random.random() < sample_rate:
+            if len(other_possible_hands) < 10:
+                other_possible_hands.append(
+                    rank.BestHand(
+                        list(hand)[0:2], table_cards + list(hand)[2:]
+                    ).best_hand
+                )
+            elif random.random() < sample_rate:
                 other_possible_hands.append(
                     rank.BestHand(
                         list(hand)[0:2], table_cards + list(hand)[2:]

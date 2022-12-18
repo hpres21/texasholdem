@@ -45,8 +45,9 @@ class BestHand:
         self.__pocket = pocket
         self.__board = board
         self.rank = ""
-        self.best_hand: list[Card]
-        self.pocket_pos: list[int]
+        self.best_hand: list[Card] = []
+        self.pocket_pos: list[int] = []
+        self.board_pos: list[int] = []
 
         self.find_best_hand()
 
@@ -63,6 +64,18 @@ class BestHand:
         else:
             return False
 
+    def _update_card_position(self):
+        self.pocket_pos = [
+            self.best_hand.index(card)
+            for card in self.__pocket
+            if card in self.best_hand
+        ]
+        self.board_pos = [
+            self.best_hand.index(card)
+            for card in self.__board
+            if card in self.best_hand
+        ]
+
     def find_best_hand(self) -> None:
         """ "
         This method runs the checks for each hand ranks and assigns the
@@ -70,19 +83,11 @@ class BestHand:
         """
         self._check_pairings()
         if self.rank == "four of a kind" or self.rank == "full house":
-            self.pocket_pos = [
-                self.best_hand.index(card)
-                for card in self.__pocket
-                if card in self.best_hand
-            ]
+            self._update_card_position()
             return None
         else:
             self._check_straight_or_flush()
-            self.pocket_pos = [
-                self.best_hand.index(card)
-                for card in self.__pocket
-                if card in self.best_hand
-            ]
+            self._update_card_position()
             return None
 
     def _check_straight_or_flush(self):

@@ -1,4 +1,5 @@
 import numpy as np
+from colorama import Fore, Style
 from player import Player, NpcRandom, NpcStrategy1, NpcStrategy2
 from poker_game import PokerTable
 from printing import print_title, print_cowboy, print_cards
@@ -107,7 +108,17 @@ def run_round(pokertable: PokerTable):
         end_round(pokertable, winner)
         return
     else:
-        (winner,) = pokertable.determine_winner()
+        winner, game_hands = pokertable.determine_winner()
+        for i, p in enumerate(pokertable.active_players):
+            print(f"\n{p.name}'s hand: " + print_cards(p.hand))
+            print(f"{p.name}'s best hand is a {game_hands[i].rank}: ", end="")
+            for card in game_hands[i].best_hand:
+                if card in p.hand:
+                    print(Fore.YELLOW + print_cards([card]) + " ", end="")
+                    print(Style.RESET_ALL, end="")
+                else:
+                    print(print_cards([card]) + " ", end="")
+            print()
         end_round(pokertable, winner)
         print(f"\n{winner.name} won the round.\n")
         return
